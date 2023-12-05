@@ -80,12 +80,18 @@ void EmPcComponent::update() {
       if (this->current_sensor_ != nullptr) {
         this->current_sensor_->publish_state(current);
       }
+      if (this->change_mode_every_ == 0 && current > 0.0f && this->voltage_sensor_ != nullptr) { // also send (calculated) voltage if we're not switching modes
+        this->voltage_sensor_->publish_state(power / current);
+      }
     } else {
       float voltage = cf1_hz * this->voltage_multiplier_;
       // ESP_LOGD(TAG, "Got power=%.1fW, voltage=%.1fV", power, voltage);
       ESP_LOGD(TAG, "Got power=%.1fW, current=%03.1fA(calc), voltage=%03.1fV(read)", power, (voltage > 0.0f ? power / voltage : 0.0f), voltage);
       if (this->voltage_sensor_ != nullptr) {
         this->voltage_sensor_->publish_state(voltage);
+      }
+      if (this->change_mode_every_ == 0 && voltage > 0.0f && this->current_sensor_ != nullptr) { // also send (calculated) current if we're not switching modes
+        this->current_sensor_->publish_state(power / voltage);
       }
     }
   }
