@@ -4,13 +4,19 @@ from esphome.components import sensor, uart
 from esphome.const import (
     CONF_ID,
     CONF_VOLTAGE,
+    CONF_FREQUENCY,
     DEVICE_CLASS_CURRENT,
     DEVICE_CLASS_POWER,
     DEVICE_CLASS_VOLTAGE,
+    DEVICE_CLASS_FREQUENCY,
+    DEVICE_CLASS_ENERGY,
     STATE_CLASS_MEASUREMENT,
+    UNIT_EMPTY,
     UNIT_VOLT,
     UNIT_AMPERE,
     UNIT_WATT,
+    UNIT_HERTZ,
+    UNIT_KILOWATT_HOURS,
 )
 
 CODEOWNERS = ["@berfenger"]
@@ -27,6 +33,8 @@ CONF_ACTIVE_POWER_1 = "active_power_1"
 CONF_ACTIVE_POWER_2 = "active_power_2"
 CONF_ENERGY_1 = "energy_1"
 CONF_ENERGY_2 = "energy_2"
+CONF_ENERGY_COUNTER_1 = "energy_counter_1"
+CONF_ENERGY_COUNTER_2 = "energy_counter_2"
 
 
 CONFIG_SCHEMA = (
@@ -37,6 +45,12 @@ CONFIG_SCHEMA = (
                 unit_of_measurement=UNIT_VOLT,
                 accuracy_decimals=1,
                 device_class=DEVICE_CLASS_VOLTAGE,
+                state_class=STATE_CLASS_MEASUREMENT,
+            ),
+            cv.Optional(CONF_FREQUENCY): sensor.sensor_schema(
+                unit_of_measurement=UNIT_HERTZ,
+                accuracy_decimals=2,
+                device_class=DEVICE_CLASS_FREQUENCY,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
             cv.Optional(CONF_CURRENT_1): sensor.sensor_schema(
@@ -63,6 +77,30 @@ CONFIG_SCHEMA = (
                 device_class=DEVICE_CLASS_POWER,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
+            cv.Optional(CONF_ENERGY_1): sensor.sensor_schema(
+                unit_of_measurement=UNIT_KILOWATT_HOURS,
+                accuracy_decimals=3,
+                device_class=DEVICE_CLASS_ENERGY,
+                state_class=STATE_CLASS_MEASUREMENT,
+            ),
+            cv.Optional(CONF_ENERGY_2): sensor.sensor_schema(
+                unit_of_measurement=UNIT_KILOWATT_HOURS,
+                accuracy_decimals=3,
+                device_class=DEVICE_CLASS_ENERGY,
+                state_class=STATE_CLASS_MEASUREMENT,
+            ),
+            cv.Optional(CONF_ENERGY_COUNTER_1): sensor.sensor_schema(
+                unit_of_measurement=UNIT_EMPTY,
+                accuracy_decimals=0,
+                device_class=DEVICE_CLASS_ENERGY,
+                state_class=STATE_CLASS_MEASUREMENT,
+            ),
+            cv.Optional(CONF_ENERGY_COUNTER_2): sensor.sensor_schema(
+                unit_of_measurement=UNIT_EMPTY,
+                accuracy_decimals=0,
+                device_class=DEVICE_CLASS_ENERGY,
+                state_class=STATE_CLASS_MEASUREMENT,
+            ),
         }
     )
     .extend(cv.polling_component_schema("60s"))
@@ -81,10 +119,15 @@ async def to_code(config):
 
     for key in [
         CONF_VOLTAGE,
+        CONF_FREQUENCY,
         CONF_CURRENT_1,
         CONF_CURRENT_2,
         CONF_ACTIVE_POWER_1,
         CONF_ACTIVE_POWER_2,
+        CONF_ENERGY_1,
+        CONF_ENERGY_2,
+        CONF_ENERGY_COUNTER_1,
+        CONF_ENERGY_COUNTER_2,
     ]:
         if key not in config:
             continue

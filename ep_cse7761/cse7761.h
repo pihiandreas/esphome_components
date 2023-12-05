@@ -12,6 +12,7 @@ struct CSE7761DataStruct {
   uint32_t voltage_rms = 0;
   uint32_t current_rms[2] = {0};
   uint32_t energy[2] = {0};
+  uint32_t energy_counter[2] = {0};
   uint32_t active_power[2] = {0};
   uint16_t coefficient[8] = {0};
   uint8_t energy_update = 0;
@@ -22,10 +23,19 @@ struct CSE7761DataStruct {
 class CSE7761Component : public PollingComponent, public uart::UARTDevice {
  public:
   void set_voltage_sensor(sensor::Sensor *voltage_sensor) { voltage_sensor_ = voltage_sensor; }
+  void set_frequency_sensor(sensor::Sensor *frequency_sensor) { frequency_sensor_ = frequency_sensor; }
   void set_active_power_1_sensor(sensor::Sensor *power_sensor_1) { power_sensor_1_ = power_sensor_1; }
   void set_current_1_sensor(sensor::Sensor *current_sensor_1) { current_sensor_1_ = current_sensor_1; }
+  void set_energy_1_sensor(sensor::Sensor *energy_sensor_1) { energy_sensor_1_ = energy_sensor_1; }
+  void set_energy_counter_1_sensor(sensor::Sensor *energy_counter_sensor_1) {
+    energy_counter_sensor_1_ = energy_counter_sensor_1;
+  }
   void set_active_power_2_sensor(sensor::Sensor *power_sensor_2) { power_sensor_2_ = power_sensor_2; }
   void set_current_2_sensor(sensor::Sensor *current_sensor_2) { current_sensor_2_ = current_sensor_2; }
+  void set_energy_2_sensor(sensor::Sensor *energy_sensor_2) { energy_sensor_2_ = energy_sensor_2; }
+  void set_energy_counter_2_sensor(sensor::Sensor *energy_counter_sensor_2) {
+    energy_counter_sensor_2_ = energy_counter_sensor_2;
+  }
   void setup() override;
   void dump_config() override;
   float get_setup_priority() const override;
@@ -34,10 +44,15 @@ class CSE7761Component : public PollingComponent, public uart::UARTDevice {
  protected:
   // Sensors
   sensor::Sensor *voltage_sensor_{nullptr};
+  sensor::Sensor *frequency_sensor_{nullptr};
   sensor::Sensor *power_sensor_1_{nullptr};
   sensor::Sensor *current_sensor_1_{nullptr};
   sensor::Sensor *power_sensor_2_{nullptr};
   sensor::Sensor *current_sensor_2_{nullptr};
+  sensor::Sensor *energy_sensor_1_{nullptr};
+  sensor::Sensor *energy_sensor_2_{nullptr};
+  sensor::Sensor *energy_counter_sensor_1_{nullptr};
+  sensor::Sensor *energy_counter_sensor_2_{nullptr};
   CSE7761DataStruct data_;
 
   void write_(uint8_t reg, uint16_t data);
