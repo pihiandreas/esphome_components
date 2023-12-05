@@ -137,4 +137,4 @@ sdkconfig.*
 
 .tests/
 
-/components
+#/components
