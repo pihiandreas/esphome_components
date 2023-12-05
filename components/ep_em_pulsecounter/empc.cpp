@@ -80,7 +80,7 @@ void EmPcComponent::update() {
       if (this->current_sensor_ != nullptr) {
         this->current_sensor_->publish_state(current);
       }
-      if (this->change_mode_every_ == 0 && current > 0.0f && this->voltage_sensor_ != nullptr) { // also send (calculated) voltage if we're not switching modes
+      if (this->change_mode_every_ == 0 && current != 0.0f && this->voltage_sensor_ != nullptr) { // also send (calculated) voltage if we're not switching modes
         this->voltage_sensor_->publish_state(power / current);
       }
     } else {
@@ -90,7 +90,7 @@ void EmPcComponent::update() {
       if (this->voltage_sensor_ != nullptr) {
         this->voltage_sensor_->publish_state(voltage);
       }
-      if (this->change_mode_every_ == 0 && voltage > 0.0f && this->current_sensor_ != nullptr) { // also send (calculated) current if we're not switching modes
+      if (this->change_mode_every_ == 0 && voltage != 0.0f && this->current_sensor_ != nullptr) { // also send (calculated) current if we're not switching modes
         this->current_sensor_->publish_state(power / voltage);
       }
     }
