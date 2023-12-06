@@ -2,6 +2,7 @@
 # MCU: ESP32-U4WDH (Single core, 160MHz, 4MB embedded flash)
 # PCB: 20220228 Shelly 1PM+_v0.2.0
 
+# Generic esp settings for this device
 esphome:
   name: ${device_name}
   platformio_options:
@@ -15,3 +16,141 @@ esp32:
       CONFIG_FREERTOS_UNICORE: y
       CONFIG_ESP32_DEFAULT_CPU_FREQ_160: y
       CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ: "160"
+
+# Device specific default sensors and switches
+sensor:
+  - platform: ep_em_pulsecounter
+    model: BL0937
+    sel_pin:
+      number: GPIO23
+      inverted: true
+    cf_pin: GPIO5
+    cf1_pin: GPIO18
+    current_resistor: ${current_res}
+    voltage_divider: ${voltage_div}
+    current:
+      name: "Current"
+      unit_of_measurement: A
+      accuracy_decimals: 3
+      icon: mdi:flash-outline
+      retain: False
+    voltage:
+      name: "Voltage"
+      unit_of_measurement: V
+      accuracy_decimals: 1
+      icon: mdi:flash-outline
+      retain: False
+    power:
+      name: "Power"
+      unit_of_measurement: W
+      id: power
+      icon: mdi:flash-outline
+      retain: False
+      on_value_range:
+        - above: "3600"
+          then:
+            - switch.turn_off: "relay"
+    energy:
+      name: "Energy"
+      unit_of_measurement: kWh
+      id: energy
+      icon: mdi:flash-outline
+      retain: False
+      accuracy_decimals: 4
+      filters:
+        - multiply: 0.001
+#    change_mode_every: 2
+    change_mode_every: 0
+    update_interval: 1s
+
+  - platform: ntc
+    sensor: temp_resistance_reading
+    name: "Temperature"
+    unit_of_measurement: "°C"
+    accuracy_decimals: 1
+    icon: "mdi:thermometer"
+    calibration:
+      b_constant: 3350
+      reference_resistance: 10kOhm
+      reference_temperature: 298.15K
+    on_value_range:
+      - above: "80.0"
+        then:
+          - switch.turn_off: "relay"
+    retain: False
+
+  - platform: resistance
+    id: temp_resistance_reading
+    sensor: temp_analog_reading
+    configuration: DOWNSTREAM
+    resistor: 10kOhm
+
+  - platform: adc
+    id: temp_analog_reading
+    pin: GPIO32
+    attenuation: 11db
+
+  - platform: adc
+    name: "Relay Supply Voltage"
+    internal: True
+    pin: GPIO33
+    attenuation: 11db
+    filters:
+      - multiply: 8
+#  - platform: total_daily_energy
+#    name: "Daily energy consumed"
+#    power_id: power
+#    filters:
+#        - multiply: 0.001
+#    unit_of_measurement: kWh
+#    icon: mdi:clock-alert
+
+output:
+  - platform: gpio
+    id: "relay_output"
+    pin: GPIO26
+
+switch:
+  - platform: output
+    id: "relay"
+    name: "Relay"
+    output: "relay_output"
+
+#light:
+#  - platform: binary
+#    id: light
+#    name: "Light"
+#    output: relay_output
+
+binary_sensor:
+  - platform: gpio
+    name: "Switch"
+    pin: GPIO4
+    id: switch_sensor
+    filters:
+      - delayed_on_off: 50ms
+# by default the external switch _toggles_ the relay 
+    on_state:
+      - logger.log: "Toggle Swtich"
+      - switch.toggle: relay
+    #  - light.toggle: light
+
+# this can be overridden in device instance f.e.
+# binary_sensor:
+#   - id: !extend switch_sensor
+#     on_state: 
+#       then: 
+#         - lambda: |-
+#             if (id(switch_sensor).state) {
+#               // Binary sensor is ON, do something here
+#               id(relay).turn_on();
+#             } else {
+#               // Binary sensor is OFF, do something else here
+#               id(relay).turn_off();
+#             }
+
+status_led:
+  pin:
+    number: GPIO0
+    inverted: true
+
