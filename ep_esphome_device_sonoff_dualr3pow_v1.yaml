@@ -99,12 +99,12 @@ output:
 
 switch:
  - platform: output
-   id: "relay_1"
-   name: "Relay 1"
+   id: "switch_1"
+   name: "Switch 1"
    output: "output_1"
  - platform: output
-   id: "relay_2"
-   name: "Relay 2"
+   id: "switch_2"
+   name: "Switch 2"
    output: "output_2"
 
 # optionally, add light-entities (in device instance) for relays that steer lights
