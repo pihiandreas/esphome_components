@@ -1,0 +1,17 @@
+# Device: Shelly Plus 1PM
+# MCU: ESP32-U4WDH (Single core, 160MHz, 4MB embedded flash)
+# PCB: 20220228 Shelly 1PM+_v0.2.0
+
+esphome:
+  name: ${device_name}
+  platformio_options:
+    board_build.f_cpu: 160000000L
+  
+esp32:
+  board: esp32doit-devkit-v1
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_FREERTOS_UNICORE: y
+      CONFIG_ESP32_DEFAULT_CPU_FREQ_160: y
+      CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ: "160"
