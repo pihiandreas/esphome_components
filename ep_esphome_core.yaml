@@ -11,6 +11,7 @@ substitutions:
 #api:
 
 ota:
+  id: ota
   password: ${admin_pwd}
   safe_mode: True
 
