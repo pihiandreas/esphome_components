@@ -9,6 +9,13 @@ substitutions:
   voltage_div: "1925"
   update_interval: ${em_update_interval}
 
+external_components:
+  - source:
+      type: git
+      url: https://github.com/pihiandreas/esphome_components
+      ref: main
+    components: [ ep_em_pulsecounter ]
+
 # Generic esp settings for this device
 esphome:
   name: ${device_name}
