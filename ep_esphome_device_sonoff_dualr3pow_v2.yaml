@@ -127,7 +127,9 @@ binary_sensor:
       inverted: True
     name: "Button"
     on_press:
-      - logger.log: "Button Pressed - No action configured"
+      - logger.log: 
+          format: "Button Pressed - No action configured"
+          level: WARN
   - platform: gpio
     pin:
       number: GPIO32
@@ -136,7 +138,9 @@ binary_sensor:
     name: "Switch 1"
     id: switch_sensor_1
     on_state:
-      - logger.warn: "Switch 1 state changed - No action configured"
+      - logger.log: 
+          format: "Switch 1 state changed - No action configured"
+          level: WARN
   - platform: gpio
     pin:
       number: GPIO33
@@ -145,7 +149,9 @@ binary_sensor:
     name: "Switch 2"
     id: switch_sensor_2
     on_state:
-      - logger.warn: "Switch 2 state changed - No action configured"
+      - logger.log: 
+          format: "Switch 2 state changed - No action configured"
+          level: WARN
 
 status_led:
   pin:

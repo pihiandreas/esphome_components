@@ -132,7 +132,7 @@ binary_sensor:
       number: GPIO32
       mode: INPUT_PULLUP
       inverted: True
-    name: "Switch 1"
+    name: "Switch Sensor 1"
     id: switch_sensor_1
     on_state:
       - logger.warn: "Switch 1 state changed - No action configured"
@@ -141,7 +141,7 @@ binary_sensor:
       number: GPIO33
       mode: INPUT_PULLUP
       inverted: True
-    name: "Switch 2"
+    name: "Switch Sensor 2"
     id: switch_sensor_2
     on_state:
       - logger.warn: "Switch 2 state changed - No action configured"
