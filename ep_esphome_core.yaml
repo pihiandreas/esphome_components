@@ -1,0 +1,114 @@
+# Device: Shelly Plus 1PM
+# MCU: ESP32-U4WDH (Single core, 160MHz, 4MB embedded flash)
+# PCB: 20220228 Shelly 1PM+_v0.2.0
+
+substitutions:
+  ##### DON'T CHANGE THIS #####
+  core_version: "0.1.0"
+  #############################
+
+# Enable Home Assistant API
+#api:
+
+ota:
+  password: ${ota_pwd}
+  safe_mode: True
+
+wifi:
+  ssid: ${wifi_ssid}
+  password: ${wifi_pwd}
+  manual_ip:
+    # Set this to the IP of the ESP (in network 192.168.12.64/26 = range: 192.168.12.65 - 192.168.12.126)
+    static_ip: ${device_ip}
+    gateway: "${network}.1"
+    subnet: 255.255.255.0
+    dns1: "${network}.2" # Local PiHole 
+    dns2: 94.140.14.14 # AdGuard DNS Primary
+  #use_address: 192.168.12.139
+  ap:
+    ssid: "${device_name} Temporary"
+    password: !secret wifiPWD
+
+captive_portal:
+
+mdns:
+  disabled: false
+
+web_server:
+  port: 80
+  auth:
+    username: admin
+    password: !secret webPWD
+
+mqtt:
+  broker: "mqtt.${mqtt_user}.edupihi.eu"
+  port: 8883
+  username: ${mqtt_user}
+  password: ${mqtt_pwd}
+  discovery: True
+  discovery_prefix: "ep_discover"
+  discovery_unique_id_generator: mac
+  discovery_retain: True
+  topic_prefix: ${device_name}
+  use_abbreviations: False
+  skip_cert_cn_check: False # see https://github.com/espressif/esp-idf/issues/9392#issuecomment-1190635692
+  idf_send_async: False
+  certificate_authority: ${ca_certificates}
+
+switch:
+  - platform: restart
+    name: Toggle Restart
+    retain: False
+
+text_sensor:
+  - platform: template
+    name: Usage
+    lambda: !lambda |-
+      return to_string("${usage}");
+  - platform: template
+    name: Route
+    lambda: !lambda |-
+      return to_string("${route}");
+  - platform: wifi_info
+    ip_address:
+      name: WiFi IP Address
+    ssid:
+      name: WiFi Connected SSID
+    bssid:
+      name: WiFi Connected BSSID
+    mac_address:
+      name: WiFi Mac Wifi Address
+    scan_results:
+      name: WiFi Latest Scan Results
+
+time:
+  - platform: sntp
+    timezone: "Europe/Helsinki"
+    servers:
+      - 194.100.49.139 # time.mikes.fi / https://www.vttresearch.com/fi/palvelut/suomen-aika-ntp-palvelu#julkinen
+    on_time_sync:
+      then:
+      - logger.log: "Synchronized system clock"
+    # on_time:
+    #   - seconds: /10
+    #     then:
+    #       - logger.log: "Time?"
+    #       - if:
+    #           condition:
+    #             - time.has_time:
+    #           then:
+    #             - logger.log: "Time is valid."
+    #           else:
+    #             - logger.log: "Time not set."
+
+sensor:
+  - platform: wifi_signal
+    name: "WiFi Signal"
+    update_interval: 60s
+    retain: False
+  - platform: uptime
+    name: Uptime
+    filters:
+      - lambda: return x / 60.0;
+    unit_of_measurement: min
+    retain: False
