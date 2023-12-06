@@ -65,11 +65,11 @@ text_sensor:
   - platform: template
     name: Usage
     lambda: !lambda |-
-      return to_string("${usage}");
+      return to_string("${em_usage}");
   - platform: template
     name: Route
     lambda: !lambda |-
-      return to_string("${route}");
+      return to_string("${em_route}");
   - platform: wifi_info
     ip_address:
       name: WiFi IP Address

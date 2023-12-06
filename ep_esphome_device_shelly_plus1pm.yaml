@@ -2,6 +2,13 @@
 # MCU: ESP32-U4WDH (Single core, 160MHz, 4MB embedded flash)
 # PCB: 20220228 Shelly 1PM+_v0.2.0
 
+substitutions:
+  # Higher value gives lower watt readout
+  current_res: "0.001"
+  # Lower value gives lower voltage readout
+  voltage_div: "1925"
+  update_interval: ${em_update_interval}
+
 # Generic esp settings for this device
 esphome:
   name: ${device_name}
@@ -18,6 +25,13 @@ esp32:
       CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ: "160"
 
 # Device specific default sensors and switches
+
+text_sensor:
+  - platform: template
+    name: Usage
+    lambda: !lambda |-
+      return to_string("${update_interval}");
+
 sensor:
   - platform: ep_em_pulsecounter
     model: BL0937
@@ -61,7 +75,7 @@ sensor:
         - multiply: 0.001
 #    change_mode_every: 2
     change_mode_every: 0
-    update_interval: 1s
+    update_interval: ${update_interval}
 
   - platform: ntc
     sensor: temp_resistance_reading
