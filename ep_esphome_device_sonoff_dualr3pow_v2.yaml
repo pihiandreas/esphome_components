@@ -1,0 +1,175 @@
+# Device: Sonoff Dual R3 Power 
+# MCU: ESP32
+# PCB: DualR3-POW V2.0 20210427
+# EM: Belling BL0930 
+
+substitutions:
+  update_interval: ${em_update_interval}
+
+# globals:
+#   - id: energy_counter_1
+#     type: uint64_t
+#   - id: energy_counter_2
+#     type: uint64_t
+
+external_components:
+  - source:
+      type: git
+      url: https://github.com/pihiandreas/esphome_components
+      ref: main
+    components: [ ep_em_bl0939 ]
+
+
+# Generic esp config for this device
+esphome:
+  name: ${device_name}
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+  
+# Device specific default sensors and switches
+
+uart:
+  tx_pin: GPIO25
+  rx_pin: GPIO26
+  baud_rate: 4800
+  parity: NONE
+  stop_bits: 2
+  
+sensor:
+  - platform: ep_em_bl0939
+    voltage:
+      name: 'Voltage'
+      unit_of_measurement: V
+      accuracy_decimals: 1
+      retain: False
+    # frequency:
+    #   name: "Frequency"
+    #   unit_of_measurement: Hz
+    #   accuracy_decimals: 2
+    #   retain: False
+    current_1:
+      name: "Current 1"
+      unit_of_measurement: A
+      accuracy_decimals: 3
+      retain: False
+    active_power_1:
+      name: "Power 1"
+      unit_of_measurement: W
+      accuracy_decimals: 3
+      retain: False
+    energy_1:
+      name: "Energy 1"
+      unit_of_measurement: kWh
+      accuracy_decimals: 3
+      retain: False
+    current_2:
+      name: "Current 2"
+      unit_of_measurement: A
+      accuracy_decimals: 3
+      retain: False
+    active_power_2:
+      name: "Power 2"
+      unit_of_measurement: W
+      accuracy_decimals: 3
+      retain: False
+    energy_2:
+      name: "Energy 2"
+      unit_of_measurement: kWh
+      accuracy_decimals: 3
+      retain: False
+    energy_total:
+      name: 'Energy Total'
+    update_interval: ${update_interval}
+    # energy_counter_1:
+    #   name: "Energy Counter 1"
+    #   retain: False
+    # energy_counter_2:
+    #   name: "Energy Counter 2"
+    #   retain: False
+
+output:
+  - platform: gpio
+    pin: GPIO27
+    id: output_1
+  - platform: gpio
+    pin: GPIO14
+    id: output_2
+
+switch:
+ - platform: output
+   id: "switch_1"
+   name: "Switch 1"
+   output: "output_1"
+ - platform: output
+   id: "switch_2"
+   name: "Switch 2"
+   output: "output_2"
+
+# optionally, add light-entities (in device instance) for relays that steer lights
+# light:
+#   - platform: binary
+#     name: "Light 1"
+#     output: output_1
+#     id: light_1
+#   - platform: binary
+#     name: "Light 2"
+#     output: output_2
+#     id: light_2
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Button"
+    on_press:
+      - logger.log: "Button Pressed - No action configured"
+  - platform: gpio
+    pin:
+      number: GPIO32
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Switch 1"
+    id: switch_sensor_1
+    on_state:
+      - logger.warn: "Switch 1 state changed - No action configured"
+  - platform: gpio
+    pin:
+      number: GPIO33
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Switch 2"
+    id: switch_sensor_2
+    on_state:
+      - logger.warn: "Switch 2 state changed - No action configured"
+
+status_led:
+  pin:
+    number: GPIO13
+    inverted: yes
+
+# by default the external switches are not configured
+# the external switches should be overridden(if used) in device instance f.e.
+# binary_sensor:
+#   - id: !extend switch_sensor_1
+#     on_state: 
+#       then: 
+#         - lambda: |-
+#             if (id(switch_sensor_1).state) {
+#               // Binary sensor is ON, do something here
+#               id(relay_1).turn_on();
+#             } else {
+#               // Binary sensor is OFF, do something else here
+#               id(relay_1).turn_off();
+#             }
+# or, if light:
+# binary_sensor:
+#   - id: !extend switch_sensor_2
+#     on_state: 
+#       then:
+#         - logger.log: "Switch 2 state changed - Toggling light 2" 
+#         - light.toggle: light_2
