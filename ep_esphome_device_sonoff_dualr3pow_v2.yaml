@@ -1,7 +1,7 @@
 # Device: Sonoff Dual R3 Power 
 # MCU: ESP32
 # PCB: DualR3-POW V2.0 20210427
-# EM: Belling BL0930 
+# EM: Belling BL0939 
 
 substitutions:
   update_interval: ${em_update_interval}
@@ -30,7 +30,6 @@ esp32:
     type: esp-idf
   
 # Device specific default sensors and switches
-
 uart:
   tx_pin: GPIO25
   rx_pin: GPIO26
@@ -135,7 +134,7 @@ binary_sensor:
       number: GPIO32
       mode: INPUT_PULLUP
       inverted: True
-    name: "Switch 1"
+    name: "Switch Sensor 1"
     id: switch_sensor_1
     on_state:
       - logger.log: 
@@ -146,7 +145,7 @@ binary_sensor:
       number: GPIO33
       mode: INPUT_PULLUP
       inverted: True
-    name: "Switch 2"
+    name: "Switch Sensor 2"
     id: switch_sensor_2
     on_state:
       - logger.log: 
