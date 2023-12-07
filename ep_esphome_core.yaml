@@ -53,9 +53,9 @@ mqtt:
   discovery_retain: True
   topic_prefix: ${device_name}
   use_abbreviations: False
-#  skip_cert_cn_check: False # see https://github.com/espressif/esp-idf/issues/9392#issuecomment-1190635692
-#  idf_send_async: False
-#  certificate_authority: ${ca_certificates}
+  skip_cert_cn_check: False # see https://github.com/espressif/esp-idf/issues/9392#issuecomment-1190635692
+  idf_send_async: False
+  certificate_authority: ${ca_certificates}
 
 switch:
   - platform: restart
