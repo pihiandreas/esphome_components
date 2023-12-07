@@ -5,7 +5,7 @@
 #include "esphome/components/sensor/sensor.h"
 
 namespace esphome {
-namespace ep_energy_sensor {
+namespace bl0939 {
 
 // https://datasheet.lcsc.com/lcsc/2108071830_BL-Shanghai-Belling-BL0939_C2841044.pdf
 // (unfortunately chinese, but the formulas can be easily understood)
