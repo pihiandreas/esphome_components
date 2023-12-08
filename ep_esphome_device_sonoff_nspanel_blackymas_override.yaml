@@ -21,7 +21,7 @@ wifi:
         dns2: 94.140.14.14 # AdGuard DNS Primary
 
 web_server:
-  ota: true
+  ota: !remove
   port: 80
   auth:
     username: admin
