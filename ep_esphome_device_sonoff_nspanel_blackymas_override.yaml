@@ -1,0 +1,181 @@
+# Device: Sonoff NSPanel 
+# MCU: ESP32
+# PCB: E32-MSW-NX P/N WW210953 NSPanel-EU (Nextion Display) / ?? (ESP32 board)
+# This packages override Blackymas template so it's dependent on it.
+
+#substitutions:
+
+esp32:
+  framework:
+    type: esp-idf
+
+wifi:
+  networks:
+    - id: !extend wifi_default
+      manual_ip:
+        # Set this to the IP of the ESP (in network 192.168.12.64/26 = range: 192.168.12.65 - 192.168.12.126)
+        static_ip: ${device_ip}
+        gateway: "${network}.1"
+        subnet: 255.255.255.0
+        dns1: "${network}.2" # Local PiHole 
+        dns2: 94.140.14.14 # AdGuard DNS Primary
+
+web_server:
+  ota: true
+  port: 80
+  auth:
+    username: admin
+    password: ${wifi_password}
+
+mqtt:
+  id: core_mqtt
+  broker: "mqtt.${mqtt_user}.edupihi.eu"
+  port: 8883
+  username: ${mqtt_user}
+  password: ${mqtt_pwd}
+  discovery: True
+  discovery_prefix: "ep_discover"
+  discovery_unique_id_generator: mac
+  discovery_retain: True
+  topic_prefix: ${device_name}
+  use_abbreviations: False
+  skip_cert_cn_check: False # see https://github.com/espressif/esp-idf/issues/9392#issuecomment-1190635692
+  idf_send_async: False
+  certificate_authority: ${ca_certificates}
+
+time:
+  - platform: sntp
+    timezone: "Europe/Helsinki"
+    servers:
+      - 194.100.49.139 # time.mikes.fi / https://www.vttresearch.com/fi/palvelut/suomen-aika-ntp-palvelu#julkinen
+    on_time_sync:
+      then:
+      - logger.log: "Synchronized system clock"
+    # on_time:
+    #   - seconds: /10
+    #     then:
+    #       - logger.log: "Time?"
+    #       - if:
+    #           condition:
+    #             - time.has_time:
+    #           then:
+    #             - logger.log: "Time is valid."
+    #           else:
+    #             - logger.log: "Time not set."
+
+.disable-mqtt: &disable-mqtt
+    discovery: False
+    state_topic: null
+
+sensor:
+  - platform: wifi_signal
+    name: "WiFi Signal"
+    update_interval: 60s
+    retain: False
+  - platform: uptime
+    name: Uptime
+    filters:
+      - lambda: return x / 60.0;
+    unit_of_measurement: min
+    retain: False
+  # x69-eh-sonoff-nspanel Temperature
+  - id: !extend temp_nspanel
+    <<: *disable-mqtt
+
+text_sensor:
+  - platform: template
+    name: Usage
+    lambda: !lambda |-
+      return to_string("${em_usage}");
+  - platform: template
+    name: Route
+    lambda: !lambda |-
+      return to_string("${em_route}");
+  - platform: wifi_info
+    ip_address:
+      name: WiFi IP Address
+    ssid:
+      name: WiFi Connected SSID
+    bssid:
+      name: WiFi Connected BSSID
+    mac_address:
+      name: WiFi Mac Wifi Address
+    scan_results:
+      name: WiFi Latest Scan Results
+  # x69-eh-sonoff-nspanel Detailed Entity
+  - id: !extend detailed_entity
+    <<: *disable-mqtt
+  # x69-eh-sonoff-nspanel Current page
+  - id: !extend current_page
+    <<: *disable-mqtt
+  # x69-eh-sonoff-nspanel Notification Label
+  - id: !extend notification_label
+    <<: *disable-mqtt
+  # x69-eh-sonoff-nspanel Notification Text
+  - id: !extend notification_text
+    <<: *disable-mqtt
+
+binary_sensor:
+  # x69-eh-sonoff-nspanel Left Button
+  - id: !extend left_button
+    <<: *disable-mqtt
+  # x69-eh-sonoff-nspanel Right Button
+  - id: !extend right_button
+    <<: *disable-mqtt
+  # x69-eh-sonoff-nspanel Nextion display
+  - id: !extend nextion_init
+    <<: *disable-mqtt
+  # x69-eh-sonoff-nspanel Status
+  - id: !extend api_status
+    <<: *disable-mqtt
+
+button:
+  # x69-eh-sonoff-nspanel Restart
+  - id: !extend restart_nspanel
+    <<: *disable-mqtt
+  # x69-eh-sonoff-nspanel Update TFT display
+  - id: !extend tft_update
+    <<: *disable-mqtt
+
+number:
+  # x69-eh-sonoff-nspanel Display Brightness
+  - id: !extend display_brightness
+    <<: *disable-mqtt
+  # x69-eh-sonoff-nspanel Display Brightness Dimdown
+  - id: !extend display_dim_brightness
+    <<: *disable-mqtt
+  # x69-eh-sonoff-nspanel Temperature Correction
+  - id: !extend temperature_correction
+    <<: *disable-mqtt
+  # x69-eh-sonoff-nspanel Timeout Page
+  - id: !extend timeout_page
+    <<: *disable-mqtt
+  # x69-eh-sonoff-nspanel Timeout Dimming
+  - id: !extend timeout_dim
+    <<: *disable-mqtt
+  # x69-eh-sonoff-nspanel Timeout Sleep
+  - id: !extend timeout_sleep
+    <<: *disable-mqtt
+
+select:
+  # x69-eh-sonoff-nspanel Wake-up page 
+  - id: !extend wakeup_page_name
+    <<: *disable-mqtt
+
+switch:
+  # x69-eh-sonoff-nspanel Notification unread
+  - id: !extend notification_unread
+    <<: *disable-mqtt
+  # x69-eh-sonoff-nspanel Notification sound
+  - id: !extend notification_sound
+    <<: *disable-mqtt
+  # x69-eh-sonoff-nspanel Relay 1
+  - id: !extend relay_1
+    <<: *disable-mqtt
+  # x69-eh-sonoff-nspanel Relay 2
+  - id: !extend relay_2
+    <<: *disable-mqtt
+  # x69-eh-sonoff-nspanel Nextion display - Power
+  - id: !extend screen_power
+    <<: *disable-mqtt
+

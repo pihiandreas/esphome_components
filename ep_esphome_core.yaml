@@ -18,6 +18,7 @@ ota:
 wifi:
   ssid: ${wifi_ssid}
   password: ${wifi_pwd}
+  ota: true
   manual_ip:
     # Set this to the IP of the ESP (in network 192.168.12.64/26 = range: 192.168.12.65 - 192.168.12.126)
     static_ip: ${device_ip}
