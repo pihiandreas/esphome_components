@@ -1,0 +1,170 @@
+# Device: Sonoff DualR3-POW V1.6 20200910 with CSE7761 power chip 
+substitutions:
+  network: "192.168.12"
+  device_num: "75"
+  device_type: "sonoff-dualr3pow"
+  device_subtype: "v1"
+  device_name: x${device_num}-eh-${device_type}
+  device_ip: "${network}.${device_num}"
+  wifi_ssid: "ajOuTiWiFi"
+  wifi_pwd: !secret wifiPWD
+  mqtt_user: "fi643007483316970021"
+  mqtt_pwd: !secret wifiPWD
+  admin_pwd: !secret wifiPWD
+  #admin_pwd: !secret otaPWD
+  #new_ota_pwd: !secret wifiPWD
+  ca_certificates: !secret letsencrypt_cacerts
+  em_usage: "Installerad i hus-elskåp, relay 1 - styr gårdens L2 (balja etc), relay 2 - styr gårdslampor, sw1 o. sw2 okopplade"
+  em_route: "l|2"
+  em_update_interval: 5s
+
+# to change the ota-password, update once with old pw and uncomment this on_boot to set a new pw
+#esphome:
+#  on_boot:
+#    - lambda: |-
+#        id(overtheair).set_auth_password(to_string("${new_ota_pwd}"));
+
+# Enable logging
+logger:
+  level: WARN
+
+#wifi:
+#  use_address: 192.168.12.212
+
+output:
+  # x76-eh-sonoff-d1dimmer = baljans takalampa
+  - platform: template
+    type: binary
+    id: _virtual_light_output_1
+    write_action:
+      - if:
+          condition:
+            lambda: return (state == 1);
+          then:
+            - mqtt.publish:
+                topic: "x76-eh-sonoff-d1dimmer/light/dimmer/command"
+                payload: '{"brightness": 255,"state": "ON"}'
+          else:
+            - mqtt.publish:
+                topic: "x76-eh-sonoff-d1dimmer/light/dimmer/command"
+                payload: '{"state": "OFF"}'
+  # x77-eh-sonoff-minir2 = utelampor uppe
+  - platform: template
+    type: binary
+    id: _virtual_light_output_2
+    write_action:
+      - if:
+          condition:
+            lambda: return (state == 1);
+          then:
+            - mqtt.publish:
+                topic: "x77-eh-sonoff-minir2/light/light/command"
+                payload: '{"state": "ON"}'
+          else:
+            - mqtt.publish:
+                topic: "x77-eh-sonoff-minir2/light/light/command"
+                payload: '{"state": "OFF"}'
+  # x78-eh-sonoff-dualr3lite = utelampor farstun
+  - platform: template
+    type: binary
+    id: _virtual_light_output_3
+    write_action:
+      - if:
+          condition:
+            lambda: return (state == 1);
+          then:
+            - mqtt.publish:
+                topic: "x78-eh-sonoff-dualr3lite/light/light_2/command"
+                payload: '{"state": "ON"}'
+          else:
+            - mqtt.publish:
+                topic: "x78-eh-sonoff-dualr3lite/light/light_2/command"
+                payload: '{"state": "OFF"}'
+
+# add light-entities for relays that steer lights
+light:
+  - platform: binary
+    name: "Light 2"
+    output: output_2
+    id: light_2
+  # Add "virtual" lights over mqtt (as internal) 
+  - platform: binary
+    name: "Virtual light 1"
+    id: _virtual_light_1
+    internal: True
+    output: _virtual_light_output_1
+  - platform: binary
+    name: "Virtual light 2"
+    id: _virtual_light_2
+    internal: True
+    output: _virtual_light_output_2
+  - platform: binary
+    name: "Virtual light 3"
+    id: _virtual_light_3
+    internal: True
+    output: _virtual_light_output_3
+  - platform: partition
+    name: "Light Group Utelampor"
+    segments:
+      - single_light_id: light_2
+      - single_light_id: _virtual_light_1
+      - single_light_id: _virtual_light_2
+      - single_light_id: _virtual_light_3
+
+
+switch:
+  # hide/make internal the switches that we control via 'light'
+  - id: !extend switch_2
+    internal: True
+  # by default keep power ON on channel 1
+  - id: !extend switch_1
+    restore_mode: ALWAYS_ON
+
+packages:
+  remote_package:
+    url: https://github.com/pihiandreas/esphome_components
+    ref: main
+    files:
+      - ep_esphome_core.yaml # Core package
+      - ep_esphome_device_sonoff_dualr3pow_v1.yaml # Device-specific defaults
+    refresh: 300s
+
+# switch:
+#   - platform: template
+#     name: "Heating Control 1"
+#     id: heating_control_1
+#     turn_on_action:
+#       - then:
+#         - mqtt.publish:
+#            topic: "eh_sonoff_4chpror3_x01/switch/eh_sonoff_4chpror3_x01_heat_control_1/command"
+#            payload: "ON"
+#         - switch.template.publish:
+#             id: heating_control_1
+#             state: ON
+#     turn_off_action:
+#       - then:
+#         - mqtt.publish:
+#            topic: "eh_sonoff_4chpror3_x01/switch/eh_sonoff_4chpror3_x01_heat_control_1/command"
+#            payload: "OFF"
+#         - switch.template.publish:
+#             id: heating_control_1
+#             state: OFF
+#   - platform: template
+#     name: "Heating Control 2"
+#     id: heating_control_2
+#     turn_on_action:
+#       - then:
+#         - mqtt.publish:
+#            topic: "eh_sonoff_4chpror3_x01/switch/eh_sonoff_4chpror3_x01_heat_control_2/command"
+#            payload: "ON"
+#         - switch.template.publish:
+#             id: heating_control_2
+#             state: ON
+#     turn_off_action:
+#       - then:
+#         - mqtt.publish:
+#            topic: "eh_sonoff_4chpror3_x01/switch/eh_sonoff_4chpror3_x01_heat_control_2/command"
+#            payload: "OFF"
+#         - switch.template.publish:
+#             id: heating_control_2
+#             state: OFF

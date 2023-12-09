@@ -56,7 +56,7 @@ packages:
    url: https://github.com/pihiandreas/esphome_components
    ref: main
    files:
-     - ep_esphome_device_sonoff_nspanel_blackymas_override.yaml
+     - "devices/ep_esphome_device_sonoff_nspanel_blackymas_override.yaml"
    refresh: 300s
 
 #### My customization - Start #####

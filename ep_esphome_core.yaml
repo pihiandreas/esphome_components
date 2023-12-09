@@ -58,10 +58,15 @@ mqtt:
   idf_send_async: False
   certificate_authority: ${ca_certificates}
 
-switch:
-  - platform: restart
-    name: Toggle Restart
-    retain: False
+# switch:
+#   - platform: restart
+#     name: Toggle Restart
+#     retain: False
+
+button:
+- platform: restart
+  name: Toggle Restart
+  retain: False
 
 text_sensor:
   - platform: template
