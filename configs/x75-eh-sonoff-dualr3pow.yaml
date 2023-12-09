@@ -26,51 +26,37 @@ logger:
 #  use_address: 192.168.12.212
 
 output:
-  # x76-eh-sonoff-d1dimmer = baljans takalampa
+  # x75-eh-sonoff-dualr3pow/light/light_2 = utelampor nere (lokal, men styrs över mqtt som del av gruppen)
   - platform: template
     type: binary
-    id: _virtual_light_output_1
+    id: _virtual_light_output_0
     write_action:
       - if:
           condition:
             lambda: return (state == 1);
           then:
+            - mqtt.publish:
+                topic: "x75-eh-sonoff-dualr3pow/light/light_2/command"
+                payload: '{"state": "ON"}'
             - mqtt.publish:
                 topic: "x76-eh-sonoff-d1dimmer/light/dimmer/command"
                 payload: '{"brightness": 255,"state": "ON"}'
-          else:
-            - mqtt.publish:
-                topic: "x76-eh-sonoff-d1dimmer/light/dimmer/command"
-                payload: '{"state": "OFF"}'
-  # x77-eh-sonoff-minir2 = utelampor uppe
-  - platform: template
-    type: binary
-    id: _virtual_light_output_2
-    write_action:
-      - if:
-          condition:
-            lambda: return (state == 1);
-          then:
             - mqtt.publish:
                 topic: "x77-eh-sonoff-minir2/light/light/command"
                 payload: '{"state": "ON"}'
-          else:
-            - mqtt.publish:
-                topic: "x77-eh-sonoff-minir2/light/light/command"
-                payload: '{"state": "OFF"}'
-  # x78-eh-sonoff-dualr3lite = utelampor farstun
-  - platform: template
-    type: binary
-    id: _virtual_light_output_3
-    write_action:
-      - if:
-          condition:
-            lambda: return (state == 1);
-          then:
             - mqtt.publish:
                 topic: "x78-eh-sonoff-dualr3lite/light/light_2/command"
                 payload: '{"state": "ON"}'
           else:
+            - mqtt.publish:
+                topic: "x75-eh-sonoff-dualr3pow/light/light_2/command"
+                payload: '{"state": "OFF"}'
+            - mqtt.publish:
+                topic: "x76-eh-sonoff-d1dimmer/light/dimmer/command"
+                payload: '{"state": "OFF"}'
+            - mqtt.publish:
+                topic: "x77-eh-sonoff-minir2/light/light/command"
+                payload: '{"state": "OFF"}'
             - mqtt.publish:
                 topic: "x78-eh-sonoff-dualr3lite/light/light_2/command"
                 payload: '{"state": "OFF"}'
@@ -83,27 +69,9 @@ light:
     id: light_2
   # Add "virtual" lights over mqtt (as internal) 
   - platform: binary
-    name: "Virtual light 1"
-    id: _virtual_light_1
-    internal: True
-    output: _virtual_light_output_1
-  - platform: binary
-    name: "Virtual light 2"
-    id: _virtual_light_2
-    internal: True
-    output: _virtual_light_output_2
-  - platform: binary
-    name: "Virtual light 3"
-    id: _virtual_light_3
-    internal: True
-    output: _virtual_light_output_3
-  - platform: partition
-    name: "Light Group Utelampor"
-    segments:
-      - single_light_id: light_2
-      - single_light_id: _virtual_light_1
-      - single_light_id: _virtual_light_2
-      - single_light_id: _virtual_light_3
+    name: "Virtual light 0"
+    id: _virtual_light_0
+    output: _virtual_light_output_0
 
 switch:
   # hide/make internal the switches that we control via 'light'

@@ -1,11 +1,10 @@
 # Device: Sonoff NSPanel with HomeAssistant & Blackymas NSPanel_HA_Blueprint
 # Note to self:
 # - dallas - mod: yes
-# - installerad i kojerasia i hallen på väggen under elskåp
-# - dallas sensor adress 0x325da42912646128 går till hallens golvtermometer-kanal
-# - dallas sensor adress 0xd000000de5923a28 är dragen till badrummets golvtermometer-kanal
-# - relay1 styr hallens golvvärme
-# - relay2 styr badrummets golvvärme
+# - installerad i farstu
+# - relay1 styr golvvärme-slinga  (600W)
+# - relay2 oanvänd
+# - dallas sensor adress 0xd96f952912646128 går till farstuns golvtermometer-kanal
 
 # Blackymas templates:
 # core : https://raw.githubusercontent.com/Blackymas/NSPanel_HA_Blueprint/main/nspanel_esphome_core.yaml
@@ -16,7 +15,7 @@ substitutions:
 ###### CHANGE ME START ######
 ## generic env settings
   network: "192.168.12"
-  device_num: "69"
+  device_num: "70"
   device_type: "sonoff-nspanel"
   device_subtype: ""
   device_name: x${device_num}-eh-${device_type}
@@ -30,7 +29,7 @@ substitutions:
   ca_certificates: !secret letsencrypt_cacerts
 
 ## ep energy mgmt
-  em_usage: "nspanel i hallen (o bad) med 2 st golvtemp-sensorer"
+  em_usage: "nspanel i farstun med 1 st golvtemp-sensor"
   em_route: ""
 
 ## nspanel & blackymas related
@@ -43,26 +42,29 @@ substitutions:
 #### DO NOT CHANGE ANYTHING! #####
 
 packages:
-  remote_package:
-    url: https://github.com/Blackymas/NSPanel_HA_Blueprint
-    ref: main
-    files:
-      - nspanel_esphome.yaml # Core package
+ remote_package:
+   url: https://github.com/Blackymas/NSPanel_HA_Blueprint
+   ref: main
+   files:
+     - nspanel_esphome.yaml # Core package
      # - nspanel_esphome_advanced.yaml # activate advanced (legacy) elements - can be useful for troubleshooting
      # - nspanel_esphome_addon_climate_cool.yaml # activate for local climate (cooling) control
      # - nspanel_esphome_addon_climate_heat.yaml # activate for local climate (heater) control
-    refresh: 300s
-  remote_package_two:
-    url: https://github.com/pihiandreas/esphome_components
-    ref: main
-    files:
-      - "devices/ep_esphome_device_sonoff_nspanel_blackymas_override.yaml"
-    refresh: 300s
+   refresh: 300s
+ remote_package_two:
+   url: https://github.com/pihiandreas/esphome_components
+   ref: main
+   files:
+     - "devices/ep_esphome_device_sonoff_nspanel_blackymas_override.yaml"
+   refresh: 300s
 
 #### My customization - Start #####
 
 logger:
-  level: DEBUG
+  level: WARN
+
+#wifi:
+  #use_address: 192.168.12.236
 
 dallas:
   - pin: 23
@@ -88,25 +90,16 @@ light:
 sensor:
   # Dallas/One-wire bus
   - platform: dallas
-    address: 0x325da42912646128
+    address: 0xd96f952912646128
 #    index: 0
     name: "Floor Temperature 1"
     id: floor_temperature_01
-  - platform: dallas
-    address: 0xd000000de5923a28
-#    index: 1
-    name: "Floor Temperature 2"
-    id: floor_temperature_02
 
 text_sensor:
   - platform: template
     name: Dallas Address 1
     lambda: |-
       return id(floor_temperature_01).get_address_name();
-  - platform: template
-    name: Dallas Address 2
-    lambda: |-
-      return id(floor_temperature_02).get_address_name();
 
 climate:
   - platform: thermostat
@@ -129,28 +122,5 @@ climate:
     preset:
       - name: Home
         default_target_temperature_low: 12 °C
-  - platform: thermostat
-    name: "Thermostat Climate Controller 02"
-    visual:
-      min_temperature: 6
-      max_temperature: 25
-      temperature_step: 0.5
-    sensor: floor_temperature_02
-    min_heating_off_time: 300s
-    min_heating_run_time: 300s
-    min_idle_time: 180s
-    heat_deadband: 0.5 # turn on heating when 0.5 under set_temp 
-    heat_overrun: 0.0 # no need, temp will overrun by 0.2-0.3 anyway
-    heat_action:
-      - switch.turn_on: relay_2
-    idle_action:
-      - switch.turn_off: relay_2
-    default_preset: Home
-    preset:
-      - name: Home
-        default_target_temperature_low: 12 °C
-
-
-
 
 #### My customization - End #####
