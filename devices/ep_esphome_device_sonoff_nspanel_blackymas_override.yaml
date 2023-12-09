@@ -21,7 +21,6 @@ wifi:
         dns2: 94.140.14.14 # AdGuard DNS Primary
 
 web_server:
-  #ota: !remove
   port: 80
   auth:
     username: admin
@@ -29,7 +28,7 @@ web_server:
 
 mqtt:
   id: core_mqtt
-  broker: "mqtt.${mqtt_user}.edupihi.eu"
+  broker: ${mqtt_broker}
   port: 8883
   username: ${mqtt_user}
   password: ${mqtt_pwd}
@@ -78,7 +77,7 @@ sensor:
       - lambda: return x / 60.0;
     unit_of_measurement: min
     retain: False
-  # x69-eh-sonoff-nspanel Temperature
+  # ${device_name} Temperature
   - id: !extend temp_nspanel
     <<: *disable-mqtt
 
@@ -102,80 +101,80 @@ text_sensor:
       name: WiFi Mac Wifi Address
     scan_results:
       name: WiFi Latest Scan Results
-  # x69-eh-sonoff-nspanel Detailed Entity
+  # ${device_name} Detailed Entity
   - id: !extend detailed_entity
     <<: *disable-mqtt
-  # x69-eh-sonoff-nspanel Current page
+  # ${device_name} Current page
   - id: !extend current_page
     <<: *disable-mqtt
-  # x69-eh-sonoff-nspanel Notification Label
+  # ${device_name} Notification Label
   - id: !extend notification_label
     <<: *disable-mqtt
-  # x69-eh-sonoff-nspanel Notification Text
+  # ${device_name} Notification Text
   - id: !extend notification_text
     <<: *disable-mqtt
 
 binary_sensor:
-  # x69-eh-sonoff-nspanel Left Button
+  # ${device_name} Left Button
   - id: !extend left_button
     <<: *disable-mqtt
-  # x69-eh-sonoff-nspanel Right Button
+  # ${device_name} Right Button
   - id: !extend right_button
     <<: *disable-mqtt
-  # x69-eh-sonoff-nspanel Nextion display
+  # ${device_name} Nextion display
   - id: !extend nextion_init
     <<: *disable-mqtt
-  # x69-eh-sonoff-nspanel Status
+  # ${device_name} Status
   - id: !extend api_status
     <<: *disable-mqtt
 
 button:
-  # x69-eh-sonoff-nspanel Restart
+  # ${device_name} Restart
   - id: !extend restart_nspanel
     <<: *disable-mqtt
-  # x69-eh-sonoff-nspanel Update TFT display
+  # ${device_name} Update TFT display
   - id: !extend tft_update
     <<: *disable-mqtt
 
 number:
-  # x69-eh-sonoff-nspanel Display Brightness
+  # ${device_name} Display Brightness
   - id: !extend display_brightness
     <<: *disable-mqtt
-  # x69-eh-sonoff-nspanel Display Brightness Dimdown
+  # ${device_name} Display Brightness Dimdown
   - id: !extend display_dim_brightness
     <<: *disable-mqtt
-  # x69-eh-sonoff-nspanel Temperature Correction
+  # ${device_name} Temperature Correction
   - id: !extend temperature_correction
     <<: *disable-mqtt
-  # x69-eh-sonoff-nspanel Timeout Page
+  # ${device_name} Timeout Page
   - id: !extend timeout_page
     <<: *disable-mqtt
-  # x69-eh-sonoff-nspanel Timeout Dimming
+  # ${device_name} Timeout Dimming
   - id: !extend timeout_dim
     <<: *disable-mqtt
-  # x69-eh-sonoff-nspanel Timeout Sleep
+  # ${device_name} Timeout Sleep
   - id: !extend timeout_sleep
     <<: *disable-mqtt
 
 select:
-  # x69-eh-sonoff-nspanel Wake-up page 
+  # ${device_name} Wake-up page 
   - id: !extend wakeup_page_name
     <<: *disable-mqtt
 
 switch:
-  # x69-eh-sonoff-nspanel Notification unread
+  # ${device_name} Notification unread
   - id: !extend notification_unread
     <<: *disable-mqtt
-  # x69-eh-sonoff-nspanel Notification sound
+  # ${device_name} Notification sound
   - id: !extend notification_sound
     <<: *disable-mqtt
-  # x69-eh-sonoff-nspanel Relay 1
+  # ${device_name} Relay 1
   - id: !extend relay_1
     <<: *disable-mqtt
-  # x69-eh-sonoff-nspanel Relay 2
+  # ${device_name} Relay 2
   - id: !extend relay_2
     <<: *disable-mqtt
-  # x69-eh-sonoff-nspanel Nextion display - Power
+  # ${device_name} Nextion display - Power
   - id: !extend screen_power
     <<: *disable-mqtt
 

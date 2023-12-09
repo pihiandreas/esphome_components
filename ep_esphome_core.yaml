@@ -12,12 +12,12 @@ substitutions:
 
 ota:
   id: overtheair
-  password: ${admin_pwd}
+  password: ${admin_password}
   safe_mode: True
 
 wifi:
   ssid: ${wifi_ssid}
-  password: ${wifi_pwd}
+  password: ${wifi_password}
   ota: true
   manual_ip:
     # Set this to the IP of the ESP (in network 192.168.12.64/26 = range: 192.168.12.65 - 192.168.12.126)
@@ -40,14 +40,14 @@ web_server:
   port: 80
   auth:
     username: admin
-    password: ${admin_pwd}
+    password: ${admin_password}
 
 mqtt:
   id: core_mqtt
-  broker: "mqtt.${mqtt_user}.edupihi.eu"
+  broker: "${mqtt_broker}"
   port: 8883
   username: ${mqtt_user}
-  password: ${mqtt_pwd}
+  password: ${mqtt_password}
   discovery: True
   discovery_prefix: "ep_discover"
   discovery_unique_id_generator: mac
