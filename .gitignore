@@ -139,4 +139,5 @@ sdkconfig.*
 
 #/components
 
-configs/secrets.yaml
+configurations/secrets.yaml
+configurations/.esphome/

@@ -124,7 +124,7 @@ switch:
     turn_on_action:
       - then:
         - mqtt.publish:
-           topic: "eh_sonoff_4chpror3_x01/switch/eh_sonoff_4chpror3_x01_heat_control_1/command"
+           topic: "x79-eh-sonoff-4chpror3/switch/heat_control_1/command"
            payload: "ON"
         - switch.template.publish:
             id: heating_control_1
@@ -132,7 +132,7 @@ switch:
     turn_off_action:
       - then:
         - mqtt.publish:
-           topic: "eh_sonoff_4chpror3_x01/switch/eh_sonoff_4chpror3_x01_heat_control_1/command"
+           topic: "x79-eh-sonoff-4chpror3/switch/heat_control_1/command"
            payload: "OFF"
         - switch.template.publish:
             id: heating_control_1
@@ -143,7 +143,7 @@ switch:
     turn_on_action:
       - then:
         - mqtt.publish:
-           topic: "eh_sonoff_4chpror3_x01/switch/eh_sonoff_4chpror3_x01_heat_control_2/command"
+           topic: "x79-eh-sonoff-4chpror3/switch/heat_control_2/command"
            payload: "ON"
         - switch.template.publish:
             id: heating_control_2
@@ -151,7 +151,7 @@ switch:
     turn_off_action:
       - then:
         - mqtt.publish:
-           topic: "eh_sonoff_4chpror3_x01/switch/eh_sonoff_4chpror3_x01_heat_control_2/command"
+           topic: "x79-eh-sonoff-4chpror3/switch/heat_control_2/command"
            payload: "OFF"
         - switch.template.publish:
             id: heating_control_2
