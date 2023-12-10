@@ -6,14 +6,17 @@ substitutions:
   device_subtype: ""
   device_name: x${device_num}-eh-${device_type}
   device_ip: "${network}.${device_num}"
-  wifi_ssid: "ajOuTiWiFi"
-  wifi_pwd: !secret wifiPWD
-  mqtt_user: "fi643007483316970021"
-  mqtt_pwd: !secret wifiPWD
-  admin_pwd: !secret wifiPWD
-  # admin_pwd: !secret otaPWD
-  # new_ota_pwd: !secret wifiPWD
+  admin_password: !secret admin_password
+  #admin_password: !secret otaPWD
+  #new_ota_password: !secret wifi_password
+  wifi_ssid: !secret wifi_ssid
+  wifi_password: !secret wifi_password
+  mqtt_user: !secret mqtt_user
+  mqtt_password: !secret mqtt_password
+  mqtt_broker: !secret mqtt_broker
   ca_certificates: !secret letsencrypt_cacerts
+
+## ep energy mgmt
   em_usage: "Baljans taklampa med dimmer"
   em_route: "l|2"
 

@@ -1,0 +1,126 @@
+# Set variables such as the device's name and friendly name
+# The devicename is used internally which the friendly name is shown in the user interface
+# Device: Shelly Plus 1PM 
+substitutions:
+  network: "192.168.12"
+  device_num: "81"
+  device_type: "shelly-1l"
+
+  device_name: x${device_num}-eh-${device_type}
+  device_ip: "${network}.${device_num}"
+  admin_password: !secret admin_password
+  #admin_password: !secret otaPWD
+  #new_ota_password: !secret wifi_password
+  wifi_ssid: !secret wifi_ssid
+  wifi_password: !secret wifi_password
+  mqtt_user: !secret mqtt_user
+  mqtt_password: !secret mqtt_password
+  mqtt_broker: !secret mqtt_broker
+  ca_certificates: !secret letsencrypt_cacerts
+
+## ep energy mgmt
+  em_usage: "Jules arbetsrum, taklampa"
+  em_route: ""
+
+# to change the ota-password, update once with old pw and uncomment this on_boot to set a new pw
+esphome:
+  name: $device_name
+#  on_boot:
+#    - lambda: |-
+#        id(overtheair).set_auth_password(to_string("${new_ota_password}"));
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+  level: WARN
+
+#wifi:
+#  use_address: 192.168.12.162
+
+mqtt:
+  # override default tls connection, since esp8266 mqtt-component is broken 
+  broker: mqtt.edupihi.home
+  port: 1883
+  # remove the esp-idf specific mqtt settings from core.yaml
+  skip_cert_cn_check: !remove
+  idf_send_async: !remove
+  certificate_authority: !remove
+
+sensor:
+  - platform: ntc
+    sensor: temp_resistance_reading
+    name: Temperature
+    unit_of_measurement: "°C"
+    accuracy_decimals: 1
+    icon: "mdi:thermometer"
+    calibration:
+      b_constant: 3350
+      reference_resistance: 10kOhm
+      reference_temperature: 298.15K
+    # on_value_range:
+    #   - above: "80.0"
+    #     then:
+    #       - light.turn_off: lightid
+  - platform: resistance
+    id: temp_resistance_reading
+    sensor: temp_analog_reading
+    configuration: DOWNSTREAM
+    resistor: 32kOhm
+  - platform: adc
+    id: temp_analog_reading
+    pin: A0
+
+# switch:
+  # - platform: output
+  #   name: "Relay 1"
+  #   pin: GPIO5
+  #   id: _switch
+  #   output: _output
+  #   restore_mode: ALWAYS_ON
+
+output:
+  - platform: gpio
+    pin: GPIO5
+    id: _output
+
+light:
+  - platform: binary
+    name: "Light"
+    output: _output
+    id: _light
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO4
+    name: "Switch Sensor 1"
+    on_state:
+      - logger.log: "$device_name Toggle Light on Switch 1"
+      - light.toggle: _light
+    filters:
+      - delayed_on_off: 50ms
+  - platform: gpio
+    pin:
+      number: GPIO14
+    name: "Switch Sensor 2"
+    on_state:
+      - logger.log: "$device_name Toggle Light on Switch 2"
+      - light.toggle: _light
+
+status_led:
+  pin: GPIO0
+
+packages:
+  remote_package:
+    url: https://github.com/pihiandreas/esphome_components
+    ref: main
+    files:
+      - ep_esphome_core.yaml # Core package
+    refresh: 300s
+
+
+  
+
+
