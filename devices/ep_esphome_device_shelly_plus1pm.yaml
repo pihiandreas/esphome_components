@@ -35,7 +35,7 @@ esp32:
 
 text_sensor:
   - platform: template
-    name: Usage
+    name: Update Interval
     lambda: !lambda |-
       return to_string("${update_interval}");
 
