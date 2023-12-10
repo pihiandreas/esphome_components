@@ -1,0 +1,68 @@
+# Device: Sonoff Dimmer D1 
+substitutions:
+  network: "192.168.12"
+  device_num: "76"
+  device_type: "sonoff-d1dimmer"
+  device_subtype: ""
+  device_name: x${device_num}-eh-${device_type}
+  device_ip: "${network}.${device_num}"
+  wifi_ssid: "ajOuTiWiFi"
+  wifi_pwd: !secret wifiPWD
+  mqtt_user: "fi643007483316970021"
+  mqtt_pwd: !secret wifiPWD
+  admin_pwd: !secret wifiPWD
+  # admin_pwd: !secret otaPWD
+  # new_ota_pwd: !secret wifiPWD
+  ca_certificates: !secret letsencrypt_cacerts
+  em_usage: "Baljans taklampa med dimmer"
+  em_route: "l|2"
+
+# to change the ota-password, update once with old pw and uncomment this on_boot to set a new pw
+esphome:
+  name: ${device_name}
+#   on_boot:
+#     - lambda: |-
+#         id(overtheair).set_auth_password(to_string("${new_ota_pwd}"));
+
+esp8266:
+  board: esp8285
+
+logger:
+# Make sure to disable serial logging as it will interfere with our serial connection
+  baud_rate: 0
+
+# wifi:
+#  use_address: 192.168.12.204
+
+mqtt:
+  # override default tls connection, since esp8266 mqtt-component is broken 
+  broker: mqtt.edupihi.home
+  port: 1883
+  # remove the esp-idf specific mqtt settings from core.yaml
+  skip_cert_cn_check: !remove
+  idf_send_async: !remove
+  certificate_authority: !remove
+
+uart:
+  rx_pin: RX
+  tx_pin: TX
+  baud_rate: 9600
+
+# And finally the light component
+# gamma correction equal to zero gives linear scale,
+# exactly what's needed for this device
+light:
+  - platform: sonoff_d1
+    use_rm433_remote: False
+    name: Dimmer
+    restore_mode: RESTORE_DEFAULT_OFF
+    gamma_correct: 0.0
+    default_transition_length: 1s
+
+packages:
+  remote_package:
+    url: https://github.com/pihiandreas/esphome_components
+    ref: main
+    files:
+      - ep_esphome_core.yaml # Core package
+    refresh: 300s

@@ -1,0 +1,85 @@
+# Device: Sonoff Mini V2.0 2021.04.27 (YX-01 94V-0 E302201) 
+substitutions:
+  network: "192.168.12"
+  device_num: "77"
+  device_type: "sonoff-minir2"
+  device_subtype: ""
+  device_name: x${device_num}-eh-${device_type}
+  device_ip: "${network}.${device_num}"
+  wifi_ssid: "ajOuTiWiFi"
+  wifi_pwd: !secret wifiPWD
+  mqtt_user: "fi643007483316970021"
+  mqtt_pwd: !secret wifiPWD
+  admin_pwd: !secret wifiPWD
+  # admin_pwd: !secret otaPWD
+  # new_ota_pwd: !secret wifiPWD
+  ca_certificates: !secret letsencrypt_cacerts
+  em_usage: "Installerad i tak i bastuterassen, styr gårdsbelysning uppe, switch inte kopplad"
+  em_route: "l|2"
+
+# to change the ota-password, update once with old pw and uncomment this on_boot to set a new pw
+esphome:
+  name: ${device_name}
+#   on_boot:
+#     - lambda: |-
+#         id(overtheair).set_auth_password(to_string("${new_ota_pwd}"));
+
+esp8266:
+  board: esp01_1m
+
+logger:
+  level: WARN
+
+wifi:
+  power_save_mode: none
+#   use_address: 192.168.12.198
+
+mqtt:
+  # override default tls connection, since esp8266 mqtt-component is broken 
+  broker: mqtt.edupihi.home
+  port: 1883
+  # remove the esp-idf specific mqtt settings from core.yaml
+  skip_cert_cn_check: !remove
+  idf_send_async: !remove
+  certificate_authority: !remove
+
+output:
+  - platform: gpio
+    pin: GPIO12
+    id: "_output"
+
+# switch:
+#  - platform: output
+#    id: "_switch"
+#    name: "Switch"
+#    output: "_output"
+
+light:
+  - platform: binary
+    name: "Light"
+    output: "_output"
+    id: _light
+
+#binary_sensor:
+#  - platform: gpio
+#    name: "Switch Sensor"
+#    pin: GPIO04
+#    id: "_switch_sensor"
+#    on_state:
+#      - logger.log: "Toggle Switch"
+#      - switch.toggle: "_switch"
+#      - light.toggle: "_light"
+
+status_led:
+  pin:
+    number: GPIO13
+    inverted: true
+
+packages:
+  remote_package:
+    url: https://github.com/pihiandreas/esphome_components
+    ref: main
+    files:
+      - ep_esphome_core.yaml # Core package
+    refresh: 300s
+

@@ -1,0 +1,73 @@
+# Set variables such as the device's name and friendly name
+# The devicename is used internally which the friendly name is shown in the user interface
+# Device: Shelly Plus 1PM 
+substitutions:
+  network: "192.168.12"
+  device_num: "72"
+  device_type: "shelly-plus1pm"
+  device_name: x${device_num}-eh-${device_type}
+  device_ip: "${network}.${device_num}" # 192.168.12.72
+  wifi_ssid: "ajOuTiWiFi"
+  wifi_pwd: !secret wifiPWD
+  mqtt_user: "fi643007483316970021"
+  mqtt_pwd: !secret wifiPWD
+  admin_pwd: !secret wifiPWD
+  ca_certificates: !secret letsencrypt_cacerts
+  usage: "Undefined"
+  route: ""
+
+external_components:
+#  - source:
+#      type: local
+#      path: /config/esphome_components/components
+  - source:
+      type: git
+      url: https://github.com/pihiandreas/esphome_components
+      ref: main
+    components: [ ep_em_pulsecounter ]
+
+# to change the ota-password, update once with old pw and uncomment this on_boot to set a new pw
+#esphome:
+#  on_boot:
+#    - lambda: |-
+#        id(overtheair).set_auth_password("testing123");
+
+# Enable logging
+logger:
+  level: WARN
+  #level: DEBUG
+  logs:
+    sensor: WARN
+    text_sensor: WARN
+    #hlw8012: DEBUG
+    mqtt.component: WARN
+    mqtt.client: ERROR
+    esp32.preferences: WARN
+    resistance: WARN
+    ntc: WARN
+
+binary_sensor:
+  - id: !extend switch_sensor
+    # override default toggling when switched, now SWITCH_ON = RELAY_ON IF OFF, SWITCH_OFF = RELAY_OFF IF ON
+    on_state: 
+      then: 
+        - lambda: |-
+            if (id(switch_sensor).state) {
+              // Binary sensor is ON, do something here
+              id(relay).turn_on();
+            } else {
+              // Binary sensor is OFF, do something else here
+              id(relay).turn_off();
+            }
+
+packages:
+  remote_package:
+    url: https://github.com/pihiandreas/esphome_components
+    ref: main
+    files:
+      - ep_esphome_core.yaml # Core package
+      - ep_esphome_device_shelly_plus1pm.yaml # Device-specific defaults
+      # - nspanel_esphome_advanced.yaml # activate advanced (legacy) elements - can be useful for troubleshooting
+      # - nspanel_esphome_addon_climate_cool.yaml # activate for local climate (cooling) control
+      # - nspanel_esphome_addon_climate_heat.yaml # activate for local climate (heater) control
+    refresh: 300s

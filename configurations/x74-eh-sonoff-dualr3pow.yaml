@@ -1,0 +1,66 @@
+# Device: Sonoff DualR3-POW V2.0 20210427 with BL0930 power chip 
+substitutions:
+  network: "192.168.12"
+  device_num: "74"
+  device_type: "sonoff-dualr3pow"
+  device_name: x${device_num}-eh-${device_type}
+  device_ip: "${network}.${device_num}"
+  wifi_ssid: "ajOuTiWiFi"
+  wifi_pwd: !secret wifiPWD
+  mqtt_user: "fi643007483316970021"
+  mqtt_pwd: !secret wifiPWD
+  admin_pwd: !secret wifiPWD
+  #admin_pwd: !secret otaPWD
+  #new_ota_pwd: !secret wifiPWD
+  ca_certificates: !secret letsencrypt_cacerts
+  em_usage: "Car-port ute strömuttag (relay1) och lampa med rörelsedetektor (relay2)"
+  em_route: "l1"
+  em_update_interval: 5s
+
+# to change the ota-password, update once with old pw and uncomment this on_boot to set a new pw
+# esphome:
+#   on_boot:
+#     - lambda: |-
+#         id(overtheair).set_auth_password(to_string("${new_ota_pwd}"));
+
+# wifi:
+#   use_address: 192.168.12.188
+
+# Enable logging
+logger:
+  level: WARN
+
+# add light-entity for relays that steer lights
+light:
+  - platform: binary
+    name: "Light 2"
+    output: output_2
+    id: light_2
+# hide switch
+switch:
+  - id: !extend switch_2
+    internal: True
+
+# rörelse detektor på sw2, potentiell bug: detektorn stänger av oberoende om man lampan var på (manuellt) före eller inte 
+binary_sensor:
+  - id: !extend switch_sensor_2
+    on_state: 
+      then: 
+        - lambda: |-
+            if (id(switch_sensor_2).state) {
+              // Binary sensor is ON, do something here
+              id(light_2).turn_on();
+            } else {
+              // Binary sensor is OFF, do something else here
+              id(light_2).turn_off();
+            }
+
+
+packages:
+  remote_package:
+    url: https://github.com/pihiandreas/esphome_components
+    ref: main
+    files:
+      - ep_esphome_core.yaml # Core package
+      - ep_esphome_device_sonoff_dualr3pow_v2.yaml # Device-specific defaults
+    refresh: 300s

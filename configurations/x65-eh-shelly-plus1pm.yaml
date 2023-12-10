@@ -1,0 +1,45 @@
+# Set variables such as the device's name and friendly name
+# The devicename is used internally which the friendly name is shown in the user interface
+# Device: Shelly Plus 1PM 
+substitutions:
+  network: "192.168.12"
+  device_num: "65"
+  device_type: "shelly-plus1pm"
+  device_name: x${device_num}-eh-${device_type}
+  device_ip: "${network}.${device_num}" # 192.168.12.65
+  wifi_ssid: "ajOuTiWiFi"
+  wifi_pwd: !secret wifiPWD
+  mqtt_user: "fi643007483316970021"
+  mqtt_pwd: !secret wifiPWD
+  admin_pwd: !secret wifiPWD
+  ca_certificates: !secret letsencrypt_cacerts
+  em_usage: "Bastukammaren, mäter förbrukning i värmebatteri, L2"
+  em_route: "gl|2-fm|2-d"
+  em_update_interval: 5s
+
+# Enable logging
+logger:
+  level: WARN
+
+binary_sensor:
+  - id: !extend switch_sensor
+    # override default toggling when switched, now SWITCH_ON = RELAY_ON IF OFF, SWITCH_OFF = RELAY_OFF IF ON
+    on_state: 
+      then: 
+        - lambda: |-
+            if (id(switch_sensor).state) {
+              // Binary sensor is ON, do something here
+              id(relay).turn_on();
+            } else {
+              // Binary sensor is OFF, do something else here
+              id(relay).turn_off();
+            }
+
+packages:
+  remote_package:
+    url: https://github.com/pihiandreas/esphome_components
+    ref: main
+    files:
+      - ep_esphome_core.yaml # Core package
+      - ep_esphome_device_shelly_plus1pm.yaml # Device-specific defaults
+    refresh: 300s

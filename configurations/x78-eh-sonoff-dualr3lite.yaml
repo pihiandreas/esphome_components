@@ -1,0 +1,111 @@
+# Device: Sonoff Mini V2.0 2021.04.27 (YX-01 94V-0 E302201) 
+substitutions:
+  network: "192.168.12"
+  device_num: "78"
+  device_type: "sonoff-dualr3lite"
+  device_subtype: ""
+  device_name: x${device_num}-eh-${device_type}
+  device_ip: "${network}.${device_num}"
+  wifi_ssid: "ajOuTiWiFi"
+  wifi_pwd: !secret wifiPWD
+  mqtt_user: "fi643007483316970021"
+  mqtt_pwd: !secret wifiPWD
+  admin_pwd: !secret wifiPWD
+  # admin_pwd: !secret otaPWD
+  # new_ota_pwd: !secret wifiPWD
+  ca_certificates: !secret letsencrypt_cacerts
+  em_usage: "Installerad i tak i farstun, relay1 o switch 1 styr farstulampor INNE, relay2 o switch 2 styr farstulampor UTE"
+  em_route: "l|?"
+
+# to change the ota-password, update once with old pw and uncomment this on_boot to set a new pw
+esphome:
+  name: ${device_name}
+#   on_boot:
+#     - lambda: |-
+#         id(overtheair).set_auth_password(to_string("${new_ota_pwd}"));
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+logger:
+  level: WARN
+
+wifi:
+#   use_address: 192.168.12.210
+
+output:
+  - platform: gpio
+    pin: GPIO27
+    id: _output_1
+  - platform: gpio
+    pin: GPIO14
+    id: _output_2
+
+# switch:
+#  - platform: output
+#    id: "_switch_1"
+#    name: "Switch 1"
+#    output: "_output_1"
+#  - platform: output
+#    id: "_switch_2"
+#    name: "Switch 2"
+#    output: "_output_2"
+
+light:
+  - platform: binary
+    name: "Light 1"
+    output: _output_1
+    id: _light_1
+  - platform: binary
+    name: "Light 2"
+    output: _output_2
+    id: _light_2
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Button"
+    on_press:
+      - logger.log: "Button pressed"
+      - light.toggle: _light_1
+  - platform: gpio
+    pin:
+      number: GPIO32
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Switch Sensor 1"
+    id: _switch_sensor_1
+    on_state:
+      - logger.log: "Switch Sensor 1 state change - toggling relay 1"
+      - light.toggle: _light_1
+#      - switch.toggle: _switch_1
+  - platform: gpio
+    pin:
+      number: GPIO33
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Switch Sensor 2"
+    id: _switch_sensor_2
+    on_state:
+      - logger.log: "Switch Sensor 2 state change - toggling relay 2"
+      - light.toggle: _light_2
+#      - switch.toggle: _switch_2
+
+status_led:
+  pin:
+    number: GPIO13
+    inverted: yes
+
+packages:
+  remote_package:
+    url: https://github.com/pihiandreas/esphome_components
+    ref: main
+    files:
+      - ep_esphome_core.yaml # Core package
+    refresh: 300s
+

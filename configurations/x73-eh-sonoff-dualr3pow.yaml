@@ -1,0 +1,75 @@
+# Device: Sonoff DualR3-POW V1.6 20200910 with CSE7761 power chip 
+substitutions:
+  network: "192.168.12"
+  device_num: "73"
+  device_type: "sonoff-dualr3pow"
+  device_name: x${device_num}-eh-${device_type}
+  device_ip: "${network}.${device_num}"
+  wifi_ssid: "ajOuTiWiFi"
+  wifi_pwd: !secret wifiPWD
+  mqtt_user: "fi643007483316970021"
+  mqtt_pwd: !secret wifiPWD
+  admin_pwd: !secret wifiPWD
+  #admin_pwd: !secret otaPWD
+  #new_ota_pwd: !secret wifiPWD
+  ca_certificates: !secret letsencrypt_cacerts
+  em_usage: "I lampsockeln i gången till grottan, relä1: lampan i taket, relä2: lampa i datorskrubb, brytare1 styr båda reläerna"
+  em_route: "gl|2-fm|2-d"
+  em_update_interval: 5s
+
+# to change the ota-password, update once with old pw and uncomment this on_boot to set a new pw
+#esphome:
+#  on_boot:
+#    - lambda: |-
+#        id(overtheair).set_auth_password(to_string("${new_ota_pwd}"));
+
+# Enable logging
+logger:
+  level: WARN
+  #level: DEBUG
+  logs:
+    mqtt.component: WARN
+    mqtt.client: ERROR
+    sensor: WARN
+    text_sensor: WARN
+    esp32.preferences: WARN
+    #ep_cse7761: DEBUG
+
+# add light-entities for relays that steer lights
+light:
+  - platform: binary
+    name: "Light 1"
+    output: output_1
+    id: light_1
+  - platform: binary
+    name: "Light 2"
+    output: output_2
+    id: light_2
+# hide/make internal the switches since we're controlling the relays via 'light'
+switch:
+  - id: !extend switch_1
+    internal: True
+  - id: !extend switch_2
+    internal: True
+
+binary_sensor:
+  - id: !extend switch_sensor_1
+    on_state: 
+      then:
+        - logger.log: "Switch 1 state changed - Toggling light 1" 
+        - light.toggle: light_1
+        - light.toggle: light_2
+  - id: !extend switch_sensor_2
+    on_state: 
+      then:
+        - logger.log: "Switch 2 state changed - Not configured" 
+#        - light.toggle: light_2
+
+packages:
+  remote_package:
+    url: https://github.com/pihiandreas/esphome_components
+    ref: main
+    files:
+      - ep_esphome_core.yaml # Core package
+      - ep_esphome_device_sonoff_dualr3pow_v1.yaml # Device-specific defaults
+    refresh: 300s
