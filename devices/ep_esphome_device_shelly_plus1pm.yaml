@@ -70,7 +70,7 @@ sensor:
       on_value_range:
         - above: "3600"
           then:
-            - switch.turn_off: "relay"
+            - switch.turn_off: "switch_1"
     energy:
       name: "Energy"
       unit_of_measurement: kWh
@@ -97,7 +97,7 @@ sensor:
     on_value_range:
       - above: "80.0"
         then:
-          - switch.turn_off: "relay"
+          - switch.turn_off: "switch_1"
     retain: False
 
   - platform: resistance
