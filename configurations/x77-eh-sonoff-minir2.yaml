@@ -22,21 +22,16 @@ substitutions:
   em_route: "l|2"
 
 # to change the ota-password, update once with old pw and uncomment this on_boot to set a new pw
-esphome:
-  name: ${device_name}
+# esphome:
 #   on_boot:
 #     - lambda: |-
 #         id(overtheair).set_auth_password(to_string("${new_ota_pwd}"));
 
-esp8266:
-  board: esp01_1m
+# wifi:
+#   use_address: 192.168.12.198
 
 logger:
   level: WARN
-
-wifi:
-  power_save_mode: none
-#   use_address: 192.168.12.198
 
 mqtt:
   # override default tls connection, since esp8266 mqtt-component is broken 
@@ -47,32 +42,11 @@ mqtt:
   idf_send_async: !remove
   certificate_authority: !remove
 
-output:
-  - platform: gpio
-    pin: GPIO12
-    id: "_output"
-
-# switch:
-#  - platform: output
-#    id: "_switch"
-#    name: "Switch"
-#    output: "_output"
-
-light:
-  - platform: binary
-    name: "Light"
-    output: "_output"
-    id: _light
-
-#binary_sensor:
-#  - platform: gpio
-#    name: "Switch Sensor"
-#    pin: GPIO04
-#    id: "_switch_sensor"
-#    on_state:
-#      - logger.log: "Toggle Switch"
-#      - switch.toggle: "_switch"
-#      - light.toggle: "_light"
+# binary_sensor:
+#   - id: !extend switch_sensor_1
+#     on_state:
+#       - logger.log: "Toggle Light 1"
+#       - light.toggle: "light_1"
 
 status_led:
   pin:
@@ -85,5 +59,6 @@ packages:
     ref: main
     files:
       - ep_esphome_core.yaml # Core package
+      - devices/ep_esphome_device_sonoff_minir2.yaml
     refresh: 300s
 

@@ -64,13 +64,13 @@ packages:
 logger:
   level: WARN
 
-## Provide a virtual light-group switch
 switch:
   - id: !extend relay_1
     pin: GPIO20 # remove pin 22 usage, gpio20 is unconnected
+
 output:
   - platform: gpio
-    id: light_output_1
+    id: output_1
     pin: GPIO22
   # x75-eh-sonoff-dualr3pow = har gruppen 'x75-eh-sonoff-dualr3pow/light/light_group_utelampor'
   - platform: template
@@ -80,11 +80,12 @@ output:
       - mqtt.publish:
           topic: "x75-eh-sonoff-dualr3pow/light/light_group_utelampor/command"
           payload: '{"state": "TOGGLE"}'
+
 light:
-#  - platform: binary
-#    name: "Light 1"
-#    id: light_1
-#    output: light_output_1
+  - platform: binary
+    name: "Light 1"
+    id: light_1
+    output: output_1
   - platform: binary
     name: "x${device_num} Virtual light 1"
     id: _virtual_light_1
@@ -131,4 +132,4 @@ binary_sensor:
           - ON for at most 0.8s
         then:
           - logger.log: "Right button - Short click"
-          - switch.toggle: relay_1
+          - light.toggle: light_1

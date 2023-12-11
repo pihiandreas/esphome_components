@@ -1,0 +1,41 @@
+# Device: Sonoff Mini V2.0 2021.04.27 (YX-01 94V-0 E302201) 
+esphome:
+  name: ${device_name}
+
+esp8266:
+  board: esp01_1m
+
+wifi:
+  power_save_mode: none
+
+output:
+  - platform: gpio
+    pin: GPIO12
+    id: "output_1"
+
+# switch:
+#  - platform: output
+#    id: "switch_1"
+#    name: "Switch 1"
+#    output: "output_1"
+
+light:
+  - platform: binary
+    name: "Light 1"
+    output: "output_1"
+    id: light_1
+
+binary_sensor:
+  - platform: gpio
+    pin: GPIO4
+    name: "Switch Sensor 1"
+    id: switch_sensor_1
+    on_state:
+      - logger.log: 
+          format: "Switch 1 state changed - No action configured"
+          level: WARN
+
+status_led:
+  pin:
+    number: GPIO13
+    inverted: true
