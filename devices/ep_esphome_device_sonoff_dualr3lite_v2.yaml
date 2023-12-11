@@ -1,0 +1,104 @@
+# Device: Sonoff Dual R3 Lite (without Power) 
+# MCU: ESP32
+
+# Generic esp config for this device
+esphome:
+  name: ${device_name}
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+  
+# Device specific default sensors and switches
+
+output:
+  - platform: gpio
+    pin: GPIO27
+    id: output_1
+  - platform: gpio
+    pin: GPIO14
+    id: output_2
+
+# by default, add light-entities indicating that relays steer lights
+light:
+  - platform: binary
+    name: "Light 1"
+    output: output_1
+    id: light_1
+  - platform: binary
+    name: "Light 2"
+    output: output_2
+    id: light_2
+
+# optionally, set outputs as switches (!extend in device instance configuration)
+# switch:
+#  - platform: output
+#    id: "switch_1"
+#    name: "Switch 1"
+#    output: "output_1"
+#  - platform: output
+#    id: "switch_2"
+#    name: "Switch 2"
+#    output: "output_2"
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Button"
+    on_press:
+      - logger.log: 
+          format: "Button Pressed - No action configured"
+          level: WARN
+  - platform: gpio
+    pin:
+      number: GPIO32
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Switch Sensor 1"
+    id: switch_sensor_1
+    on_state:
+      - logger.log: 
+          format: "Switch 1 state changed - No action configured"
+          level: WARN
+  - platform: gpio
+    pin:
+      number: GPIO33
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Switch Sensor 2"
+    id: switch_sensor_2
+    on_state:
+      - logger.log: 
+          format: "Switch 2 state changed - No action configured"
+          level: WARN
+
+status_led:
+  pin:
+    number: GPIO13
+    inverted: yes
+
+# by default the external switches are not configured
+# the external switches should be overridden(if used) in device instance f.e.
+# binary_sensor:
+#   - id: !extend switch_sensor_1
+#     on_state: 
+#       then: 
+#         - lambda: |-
+#             if (id(switch_sensor_1).state) {
+#               // Binary sensor is ON, do something here
+#               id(relay_1).turn_on();
+#             } else {
+#               // Binary sensor is OFF, do something else here
+#               id(relay_1).turn_off();
+#             }
+# or, if light:
+# binary_sensor:
+#   - id: !extend switch_sensor_2
+#     on_state: 
+#       then:
+#         - logger.log: "Switch 2 state changed - Toggling light 2" 
+#         - light.toggle: light_2
