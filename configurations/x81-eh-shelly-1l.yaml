@@ -23,21 +23,14 @@ substitutions:
   em_route: ""
 
 # to change the ota-password, update once with old pw and uncomment this on_boot to set a new pw
-esphome:
-  name: $device_name
+# esphome:
 #  on_boot:
 #    - lambda: |-
 #        id(overtheair).set_auth_password(to_string("${new_ota_password}"));
 
-esp8266:
-  board: esp01_1m
-
 # Enable logging
 logger:
   level: WARN
-
-#wifi:
-#  use_address: 192.168.12.162
 
 mqtt:
   # override default tls connection, since esp8266 mqtt-component is broken 
@@ -48,69 +41,13 @@ mqtt:
   idf_send_async: !remove
   certificate_authority: !remove
 
-sensor:
-  - platform: ntc
-    sensor: temp_resistance_reading
-    name: Temperature
-    unit_of_measurement: "°C"
-    accuracy_decimals: 1
-    icon: "mdi:thermometer"
-    calibration:
-      b_constant: 3350
-      reference_resistance: 10kOhm
-      reference_temperature: 298.15K
-    # on_value_range:
-    #   - above: "80.0"
-    #     then:
-    #       - light.turn_off: lightid
-  - platform: resistance
-    id: temp_resistance_reading
-    sensor: temp_analog_reading
-    configuration: DOWNSTREAM
-    resistor: 32kOhm
-  - platform: adc
-    id: temp_analog_reading
-    pin: A0
-
-# switch:
-  # - platform: output
-  #   name: "Relay 1"
-  #   pin: GPIO5
-  #   id: _switch
-  #   output: _output
-  #   restore_mode: ALWAYS_ON
-
-output:
-  - platform: gpio
-    pin: GPIO5
-    id: _output
-
-light:
-  - platform: binary
-    name: "Light"
-    output: _output
-    id: _light
-
 binary_sensor:
-  - platform: gpio
-    pin:
-      number: GPIO4
-    name: "Switch Sensor 1"
+  - id: !extend switch_sensor_1
     on_state:
-      - logger.log: "$device_name Toggle Light on Switch 1"
-      - light.toggle: _light
+      - logger.log: "$device_name Toggle Light 1 on Switch 1"
+      - light.toggle: light_1
     filters:
       - delayed_on_off: 50ms
-  - platform: gpio
-    pin:
-      number: GPIO14
-    name: "Switch Sensor 2"
-    on_state:
-      - logger.log: "$device_name Toggle Light on Switch 2"
-      - light.toggle: _light
-
-status_led:
-  pin: GPIO0
 
 packages:
   remote_package:
@@ -118,6 +55,7 @@ packages:
     ref: main
     files:
       - ep_esphome_core.yaml # Core package
+      - devices/ep_esphome_device_shelly_1l.yaml
     refresh: 300s
 
 
