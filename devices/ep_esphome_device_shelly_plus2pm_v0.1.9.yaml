@@ -1,0 +1,217 @@
+# Device: Shelly Plus 2PM v0.1.9 DualCore 
+# MCU: ESP32-U4WDH (Dual core, 240MHz, 4MB embedded flash)
+# MCU Marking: DHPPG9420
+# EM: ADE7953
+# PCB: 2022-6-2 Shelly 2PM+_v0.1.9
+
+
+substitutions:
+  # Higher value gives lower watt readout
+  current_res: "0.001"
+  # Lower value gives lower voltage readout
+  voltage_div: "1925"
+  update_interval: ${em_update_interval}
+
+external_components:
+  - source:
+      type: git
+      url: https://github.com/pihiandreas/esphome_components
+      ref: main
+    components: [ ep_em_pulsecounter ]
+
+# Generic esp settings for this device
+esphome:
+  name: ${device_name}
+
+esp32:
+  board: esp32doit-devkit-v1
+  framework:
+    type: esp-idf
+
+# esp32:
+#   board: esp32doit-devkit-v1
+#   framework:
+#     type: esp-idf
+#     sdkconfig_options:
+#       CONFIG_FREERTOS_UNICORE: y
+#       CONFIG_ESP32_DEFAULT_CPU_FREQ_160: y
+#       CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ: "160"
+
+# Device specific default sensors and switches
+
+text_sensor:
+  - platform: template
+    name: Update Interval
+    lambda: !lambda |-
+      return to_string("${update_interval}");
+
+i2c:
+  sda: GPIO26
+  scl: GPIO25
+
+output:
+  - platform: gpio
+    pin: GPIO12
+    id: output_1
+  - platform: gpio
+    pin: GPIO13
+    id: output_2
+
+switch:
+  - platform: output
+    id: "switch_1"
+    name: "Switch 1"
+    output: "output_1"
+  - platform: output
+    id: "switch_2"
+    name: "Switch 2"
+    output: "output_2"
+
+# light:
+#   - platform: binary
+#     name: "Light 1"
+#     output: output_1
+#     id: light_1
+#   - platform: binary
+#     name: "Light 2"
+#     output: output_2
+#     id: light_2
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO4
+      inverted: True
+      mode:
+        input: true
+        pullup: true
+    name: "Button"
+    internal: true
+    on_press:
+      - logger.log: "$device_name Button Press - No action configured"
+      - light.toggle: light1
+  - platform: gpio
+    pin: GPIO5
+    name: "Switch Sensor 1"
+    id: switch_sensor_1
+    on_state:
+      - logger.log: 
+          format: "Switch 1 state changed - No action configured"
+          level: WARN
+    # filters:
+    #   - delayed_on_off: 50ms
+    # on_state:
+    #   - logger.log: "$friendly_name Toggle Light 1"
+    #   # - switch.toggle: relay1
+    #   - light.toggle: light1
+  - platform: gpio
+    pin: GPIO18
+    name: "Switch Sensor 2"
+    id: switch_sensor_2
+    on_state:
+      - logger.log: 
+          format: "Switch 2 state changed - No action configured"
+          level: WARN
+    # filters:
+    #   - delayed_on_off: 50ms
+    # on_state:
+    #   - logger.log: "$friendly_name Toggle Light 2"
+    #   # - switch.toggle: relay1
+    #   - light.toggle: light2
+
+# this can be overridden in device instance f.e.
+# binary_sensor:
+#   - id: !extend switch_sensor_1
+#     on_state: 
+#       then: 
+#         - lambda: |-
+#             if (id(switch_sensor_1).state) {
+#               // Binary sensor is ON, do something here
+#               id(switch_1).turn_on();
+#             } else {
+#               // Binary sensor is OFF, do something else here
+#               id(switch_1).turn_off();
+#             }
+
+sensor:
+  # Power Sensor
+  - platform: ade7953
+    irq_pin: GPIO27
+    voltage:
+      name: 'Voltage'
+      unit_of_measurement: V
+      accuracy_decimals: 1
+      retain: False
+    # frequency:
+    #   name: "Frequency"
+    #   unit_of_measurement: Hz
+    #   accuracy_decimals: 2
+    #   retain: False
+    current_a:
+      name: "Current 1"
+      unit_of_measurement: A
+      accuracy_decimals: 3
+      retain: False
+    active_power_a:
+      name: "Power 1"
+      filters:
+        - multiply: -1
+      unit_of_measurement: W
+      accuracy_decimals: 3
+      retain: False
+    # energy_1:
+    #   name: "Energy 1"
+    #   unit_of_measurement: kWh
+    #   accuracy_decimals: 3
+    #   retain: False
+    current_b:
+      name: "Current 2"
+      unit_of_measurement: A
+      accuracy_decimals: 3
+      retain: False
+    active_power_b:
+      name: "Power 2"
+      unit_of_measurement: W
+      accuracy_decimals: 3
+      retain: False
+    # energy_2:
+    #   name: "Energy 2"
+    #   unit_of_measurement: kWh
+    #   accuracy_decimals: 3
+    #   retain: False
+    # energy_total:
+    #   name: 'Energy Total'
+    update_interval: ${update_interval}
+
+  # Internal NTC Temperature sensor
+  - platform: ntc
+    sensor: temp_resistance_reading
+    name: "Temperature"
+    unit_of_measurement: "°C"
+    accuracy_decimals: 1
+    icon: "mdi:thermometer"
+    calibration:
+      b_constant: 3350
+      reference_resistance: 4.7kOhm
+      reference_temperature: 298.15K
+
+  # Required for NTC sensor
+  - platform: resistance
+    id: temp_resistance_reading
+    sensor: temp_analog_reading
+    configuration: DOWNSTREAM
+    resistor: 5.6kOhm
+
+  # Required for NTC sensor
+  - platform: adc
+    id: temp_analog_reading
+    pin: GPIO35
+    attenuation: 11db
+    update_interval: 10s
+
+status_led:
+  pin:
+    number: GPIO0
+    inverted: true
+
+
