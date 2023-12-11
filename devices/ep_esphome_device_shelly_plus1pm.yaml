@@ -128,46 +128,45 @@ sensor:
 
 output:
   - platform: gpio
-    id: "relay_output"
+    id: "output_1"
     pin: GPIO26
 
 switch:
   - platform: output
-    id: "relay"
-    name: "Relay"
-    output: "relay_output"
+    id: "switch_1"
+    name: "Switch 1"
+    output: "output_1"
 
 #light:
 #  - platform: binary
-#    id: light
-#    name: "Light"
-#    output: relay_output
+#    id: light_1
+#    name: "Light 1"
+#    output: output_1
 
 binary_sensor:
   - platform: gpio
-    name: "Switch"
+    name: "Switch Sensor 1"
     pin: GPIO4
-    id: switch_sensor
+    id: switch_sensor_1
     filters:
       - delayed_on_off: 50ms
-# by default the external switch _toggles_ the relay 
     on_state:
-      - logger.log: "Toggle Swtich"
-      - switch.toggle: relay
-    #  - light.toggle: light
+      - logger.log: 
+          format: "Switch Sensor 1 state changed - No action configured"
+          level: WARN
 
 # this can be overridden in device instance f.e.
 # binary_sensor:
-#   - id: !extend switch_sensor
+#   - id: !extend switch_sensor_1
 #     on_state: 
 #       then: 
 #         - lambda: |-
-#             if (id(switch_sensor).state) {
+#             if (id(switch_sensor_1).state) {
 #               // Binary sensor is ON, do something here
-#               id(relay).turn_on();
+#               id(switch_1).turn_on();
 #             } else {
 #               // Binary sensor is OFF, do something else here
-#               id(relay).turn_off();
+#               id(switch_1).turn_off();
 #             }
 
 status_led:
