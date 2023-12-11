@@ -28,7 +28,7 @@ esphome:
        id(overtheair).set_auth_password(to_string("${new_ota_password}"));
 
 wifi:
-  use_addreass: 192.168.12.157
+  use_address: 192.168.12.157
 
 # Enable logging
 logger:

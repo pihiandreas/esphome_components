@@ -135,7 +135,7 @@ binary_sensor:
 
 sensor:
   # Power Sensor
-  - platform: ade7953
+  - platform: ade7953_i2c
     irq_pin: GPIO27
     voltage:
       name: 'Voltage'
