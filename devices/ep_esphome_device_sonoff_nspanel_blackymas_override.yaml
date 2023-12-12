@@ -77,9 +77,9 @@ sensor:
       - lambda: return x / 60.0;
     unit_of_measurement: min
     retain: False
-  # ${device_name} Temperature
   - id: !extend temp_nspanel
-    <<: *disable-mqtt
+    # <<: *disable-mqtt
+    name: "Temperature" # remove prefixed device_name
 
 text_sensor:
   - platform: template
@@ -145,7 +145,8 @@ number:
     <<: *disable-mqtt
   # ${device_name} Temperature Correction
   - id: !extend temperature_correction
-    <<: *disable-mqtt
+    # <<: *disable-mqtt
+    name: "Temperature Correction" # remove prefixed device_name
   # ${device_name} Timeout Page
   - id: !extend timeout_page
     <<: *disable-mqtt
