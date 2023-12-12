@@ -19,8 +19,9 @@ substitutions:
   ca_certificates: !secret letsencrypt_cacerts
 
 ## ep energy mgmt
-  em_usage: ""
+  em_usage: "3 fas mätare i husets elskåp, subpanel 1"
   em_route: ""
+  em_update_interval: 5s
 
 # to change the ota-password, update once with old pw and uncomment this on_boot to set a new pw
 #esphome:

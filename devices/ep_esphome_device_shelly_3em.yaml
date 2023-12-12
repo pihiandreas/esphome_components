@@ -64,7 +64,8 @@ sensor:
       number: GPIO5
     reset_pin:
       number: GPIO16
-    frequency: 60Hz
+    frequency: 50Hz
+    update_interval: ${em_update_interval}
     phase_a:
       name: Phase A
       voltage: Voltage
