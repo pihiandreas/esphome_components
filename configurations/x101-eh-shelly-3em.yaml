@@ -31,9 +31,6 @@ substitutions:
 #wifi:
 #  use_address: 192.168.12.243
 
-esp8266:
-  board: espduino
-
 # Enable logging
 logger:
   level: WARN
@@ -69,8 +66,5 @@ packages:
       - ep_esphome_core.yaml # Core package
       - devices/ep_esphome_device_shelly_3em.yaml
     refresh: 300s
-
-
-  
 
 
