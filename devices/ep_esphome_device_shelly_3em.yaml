@@ -1,0 +1,77 @@
+# Device: Shelly 3EM
+
+esphome:
+  name: $device_name
+
+esp8266:
+  board: esp01_1m
+
+# sensor:
+#   - platform: ntc
+#     sensor: temp_resistance_reading
+#     name: Temperature
+#     unit_of_measurement: "°C"
+#     accuracy_decimals: 1
+#     calibration:
+#       b_constant: 3350
+#       reference_resistance: 10kOhm
+#       reference_temperature: 298.15K
+#     # on_value_range:
+#     #   - above: "80.0"
+#     #     then:
+#     #       - light.turn_off: lightid
+#   - platform: resistance
+#     id: temp_resistance_reading
+#     sensor: temp_analog_reading
+#     configuration: DOWNSTREAM
+#     resistor: 32kOhm
+#   - platform: adc
+#     id: temp_analog_reading
+#     pin: A0
+
+# output:
+#   - platform: gpio
+#     pin: GPIO5
+#     id: output_1
+
+# switch:
+#   - platform: output
+#     name: "Switch 1"
+#     pin: GPIO5
+#     id: switch_1
+#     output: output_1
+#     restore_mode: ALWAYS_ON
+
+# light:
+#   - platform: binary
+#     name: "Light 1"
+#     output: output_1
+#     id: light_1
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO4
+    name: "Switch Sensor 1"
+    id: switch_sensor_1
+    on_state:
+      - logger.log: 
+          format: "Switch 1 state changed - No action configured"
+          level: WARN
+    filters:
+      - delayed_on_off: 50ms
+#   - platform: gpio
+#     pin:
+#       number: GPIO14
+#     id: switch_sensor_2
+#     on_state:
+#       - logger.log: 
+#           format: "Switch 2 state changed - No action configured"
+#           level: WARN
+
+status_led:
+  pin: GPIO2
+
+  
+
+
