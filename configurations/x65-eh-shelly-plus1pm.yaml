@@ -24,27 +24,29 @@ substitutions:
   em_route: "gl|2-fm|2-d"
 
 # to change the ota-password, update once with old pw and uncomment this on_boot to set a new pw
-#esphome:
-#  on_boot:
-#    - lambda: |-
-#        id(overtheair).set_auth_password(to_string("${new_ota_password}"));
+# esphome:
+#   on_boot:
+#     - lambda: |-
+#         id(overtheair).set_auth_password(to_string("${new_ota_password}"));
+# wifi:
+#   use_address: 192.168.12.246
 
 # Enable logging
 logger:
   level: WARN
 
 binary_sensor:
-  - id: !extend switch_sensor
+  - id: !extend switch_sensor_1
     # override default toggling when switched, now SWITCH_ON = RELAY_ON IF OFF, SWITCH_OFF = RELAY_OFF IF ON
     on_state: 
       then: 
         - lambda: |-
-            if (id(switch_sensor).state) {
+            if (id(switch_sensor_1).state) {
               // Binary sensor is ON, do something here
-              id(relay).turn_on();
+              id(switch_1).turn_on();
             } else {
               // Binary sensor is OFF, do something else here
-              id(relay).turn_off();
+              id(switch_1).turn_off();
             }
 
 packages:

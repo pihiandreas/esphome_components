@@ -41,12 +41,14 @@ logger:
 
 binary_sensor:
   - id: !extend switch_sensor_1
-    on_state:
-      - logger.log: "Switch Sensor 1 state change - toggling relay 1"
+    on_state: !remove
+    on_press:
+      - logger.log: "Switch Sensor 1 state PRESSED - toggling relay 1"
       - light.toggle: light_1
   - id: !extend switch_sensor_2
-    on_state:
-      - logger.log: "Switch Sensor 2 state change - toggling relay 2"
+    on_state: !remove
+    on_press:
+      - logger.log: "Switch Sensor 2 state PRESSED - toggling relay 2"
       - light.toggle: light_2
 
 packages:

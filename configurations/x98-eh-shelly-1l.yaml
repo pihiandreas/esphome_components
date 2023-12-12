@@ -3,8 +3,9 @@
 # Device: Shelly Plus 1PM 
 substitutions:
   network: "192.168.12"
-  device_num: "72"
-  device_type: "shelly-plus1pm"
+  device_num: "98"
+  device_type: "shelly-1l"
+
   device_name: x${device_num}-eh-${device_type}
   device_ip: "${network}.${device_num}"
   admin_password: !secret admin_password
@@ -18,45 +19,44 @@ substitutions:
   ca_certificates: !secret letsencrypt_cacerts
 
 ## ep energy mgmt
-  em_update_interval: 5s
-  em_usage: "Uninstalled"
+  em_usage: "Golvlampa"
   em_route: ""
 
 # to change the ota-password, update once with old pw and uncomment this on_boot to set a new pw
-# esphome:
-#   on_boot:
-#     - lambda: |-
-#         id(overtheair).set_auth_password(to_string("${new_ota_password}"));
-# wifi:
-#   use_address: 192.168.12.246
+#esphome:
+# on_boot:
+#   - lambda: |-
+#       id(overtheair).set_auth_password(to_string("${new_ota_password}"));
+
+#wifi:
+#  use_address: 192.168.12.243
 
 # Enable logging
 logger:
   level: WARN
-  #level: DEBUG
-  logs:
-    sensor: WARN
-    text_sensor: WARN
-    #hlw8012: DEBUG
-    mqtt.component: WARN
-    mqtt.client: ERROR
-    esp32.preferences: WARN
-    resistance: WARN
-    ntc: WARN
+
+mqtt:
+  # override default tls connection, since esp8266 mqtt-component is broken 
+  broker: mqtt.edupihi.home
+  port: 1883
+  # remove the esp-idf specific mqtt settings from core.yaml
+  skip_cert_cn_check: !remove
+  idf_send_async: !remove
+  certificate_authority: !remove
 
 binary_sensor:
-  - id: !extend switch_sensor_1
-    # override default toggling when switched, now SWITCH_ON = RELAY_ON IF OFF, SWITCH_OFF = RELAY_OFF IF ON
-    on_state: 
-      then: 
-        - lambda: |-
-            if (id(switch_sensor_1).state) {
-              // Binary sensor is ON, do something here
-              id(switch_1).turn_on();
-            } else {
-              // Binary sensor is OFF, do something else here
-              id(switch_1).turn_off();
-            }
+#  - id: !extend switch_sensor_1
+#    on_state:
+#      - logger.log: "$device_name Toggle Light 1 on Switch 1"
+#      - light.toggle: light_1
+#    filters:
+#      - delayed_on_off: 50ms
+  - id: !extend switch_sensor_2
+    on_state:
+      - logger.log: "$device_name Toggle Light 1 on Switch 2"
+      - light.toggle: light_1
+    filters:
+      - delayed_on_off: 50ms
 
 packages:
   remote_package:
@@ -64,5 +64,10 @@ packages:
     ref: main
     files:
       - ep_esphome_core.yaml # Core package
-      - devices/ep_esphome_device_shelly_plus1pm.yaml # Device-specific defaults
+      - devices/ep_esphome_device_shelly_1l.yaml
     refresh: 300s
+
+
+  
+
+
