@@ -18,7 +18,7 @@ substitutions:
   ca_certificates: !secret letsencrypt_cacerts
 
 ## ep energy mgmt
-  em_usage: "Jule arbetsrum, i kopplingsskåp, "
+  em_usage: "NOT RESPONDING, IN USE/CONNECTED?"
   em_route: ""
   em_update_interval: 5s
 

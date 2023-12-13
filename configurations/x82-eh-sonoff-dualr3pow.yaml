@@ -37,10 +37,10 @@ binary_sensor:
         - lambda: |-
             if (id(switch_sensor_2).state) {
               // Binary sensor is ON, do something here
-              id(switch_1).turn_on();
+              id(switch_2).turn_on();
             } else {
               // Binary sensor is OFF, do something else here
-              id(switch_1).turn_off();
+              id(switch_2).turn_off();
             }
 
 packages:
