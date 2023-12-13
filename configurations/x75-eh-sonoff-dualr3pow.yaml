@@ -46,7 +46,7 @@ output:
                 topic: "x76-eh-sonoff-d1dimmer/light/dimmer/command"
                 payload: '{"brightness": 255,"state": "ON"}'
             - mqtt.publish:
-                topic: "x77-eh-sonoff-minir2/light/light/command"
+                topic: "x77-eh-sonoff-minir2/light/light_1/command"
                 payload: '{"state": "ON"}'
             - mqtt.publish:
                 topic: "x78-eh-sonoff-dualr3lite/light/light_2/command"
@@ -59,7 +59,7 @@ output:
                 topic: "x76-eh-sonoff-d1dimmer/light/dimmer/command"
                 payload: '{"state": "OFF"}'
             - mqtt.publish:
-                topic: "x77-eh-sonoff-minir2/light/light/command"
+                topic: "x77-eh-sonoff-minir2/light/light_1/command"
                 payload: '{"state": "OFF"}'
             - mqtt.publish:
                 topic: "x78-eh-sonoff-dualr3lite/light/light_2/command"

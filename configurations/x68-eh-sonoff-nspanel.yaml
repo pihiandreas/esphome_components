@@ -2,9 +2,9 @@
 # Note to self:
 # - dallas - mod: yes
 # - installerad i jules arbertsrum
-# - relay1 styr sonoff relä för värme-batteri  (1000W)
-# - relay2 oanvänd?
-# - ingaa dallas sensorer kopplade
+# - nspanelens relay1 styr sonoff relä (x82-eh-sonoff-dualr3pow / SW2&RY2) för värme-batteri  (1000W)
+# - nspanelens relay2 oanvänt
+# - inga dallas sensorer kopplade
 
 # Blackymas templates:
 # core : https://raw.githubusercontent.com/Blackymas/NSPanel_HA_Blueprint/main/nspanel_esphome_core.yaml
@@ -123,26 +123,26 @@ light:
 #     lambda: |-
 #       return id(floor_temperature_01).get_address_name();
 
-# climate:
-#   - platform: thermostat
-#     name: "Thermostat Climate Controller 01"
-#     visual:
-#       min_temperature: 6
-#       max_temperature: 25
-#       temperature_step: 0.5
-#     sensor: floor_temperature_01
-#     min_heating_off_time: 300s
-#     min_heating_run_time: 300s
-#     min_idle_time: 180s
-#     heat_deadband: 0.5 # turn on heating when 0.5 under set_temp 
-#     heat_overrun: 0.0 # no need, temp will overrun by 0.2-0.3 anyway
-#     heat_action:
-#       - switch.turn_on: relay_1
-#     idle_action:
-#       - switch.turn_off: relay_1
-#     default_preset: Home
-#     preset:
-#       - name: Home
-#         default_target_temperature_low: 12 °C
+climate:
+  - platform: thermostat
+    name: "Thermostat Climate Controller 01"
+    visual:
+      min_temperature: 6
+      max_temperature: 25
+      temperature_step: 0.5
+    sensor: temperature_01
+    min_heating_off_time: 300s
+    min_heating_run_time: 300s
+    min_idle_time: 180s
+    heat_deadband: 0.5 # turn on heating when 0.5 under set_temp 
+    heat_overrun: 0.0 # no need, temp will overrun by 0.2-0.3 anyway
+    heat_action:
+      - switch.turn_on: relay_1
+    idle_action:
+      - switch.turn_off: relay_1
+    default_preset: Home
+    preset:
+      - name: Home
+        default_target_temperature_low: 12 °C
 
 #### My customization - End #####
