@@ -92,7 +92,8 @@ time:
   - platform: sntp
     timezone: "Europe/Helsinki"
     servers:
-      - 194.100.49.139 # time.mikes.fi / https://www.vttresearch.com/fi/palvelut/suomen-aika-ntp-palvelu#julkinen
+      - 192.168.12.9
+      #- 194.100.49.139 # time.mikes.fi / https://www.vttresearch.com/fi/palvelut/suomen-aika-ntp-palvelu#julkinen
     on_time_sync:
       then:
       - logger.log: "Synchronized system clock"
