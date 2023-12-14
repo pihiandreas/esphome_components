@@ -17,7 +17,7 @@ static const uint8_t DALLAS_COMMAND_START_CONVERSION = 0x44;
 static const uint8_t DALLAS_COMMAND_READ_SCRATCH_PAD = 0xBE;
 static const uint8_t DALLAS_COMMAND_WRITE_SCRATCH_PAD = 0x4E;
 
-std::string uint64_to_string( uint64 value ) {
+std::string uint64_to_string( uint64_t value ) {
     std::ostringstream os;
     os << value;
     return os.str();
