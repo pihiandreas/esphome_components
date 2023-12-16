@@ -5,7 +5,7 @@
 esphome:
   name: ${device_name}
 
-esp32:
+esp8266:
   board: esp01_1m
 
 # Device specific default sensors and switches
