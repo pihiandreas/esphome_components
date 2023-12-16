@@ -61,7 +61,7 @@ binary_sensor:
         input: true
         pullup: true
       inverted: true
-    id: "switch_sensor_2"
+    id: "switch_sensor_3"
     on_state:
       - logger.log: 
           format: "Button / Switch Sensor 3 (internal BUTTON1) state changed - No action configured"
