@@ -48,6 +48,12 @@ mqtt:
 #       - logger.log: "Toggle Light 1"
 #       - light.toggle: "light_1"
 
+light:
+  - id: !remove light_1
+
+binary_sensor:
+  - id: !remove switch_sensor_1
+  
 dallas:
   - pin: GPIO03
     update_interval: 5s

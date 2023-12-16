@@ -1,0 +1,72 @@
+# Device: Sonoff Dual R3 Lite (without Power) 
+# MCU: ESP32
+
+# Generic esp config for this device
+esphome:
+  name: ${device_name}
+
+esp32:
+  board: esp01_1m
+
+# Device specific default sensors and switches
+
+output:
+  - platform: gpio
+    pin: GPIO12
+    id: output_1
+  - platform: gpio
+    pin: GPIO5
+    id: output_2
+
+switch:
+  - platform: output
+    name: "Switch 1"
+    id: switch_1
+  - platform: output
+    name: "Switch 2"
+    id: switch_2
+
+# https://esphome.io/devices/sonoff.html#sonoff-dual-r2-v1-4
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO10
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: "switch_sensor_1"
+    on_state:
+      - logger.log: 
+          format: "Button / Switch Sensor 1 state changed - No action configured"
+          level: WARN
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: "switch_sensor_2"
+    on_state:
+      - logger.log: 
+          format: "Button / Switch Sensor 2 (internal BUTTON0) state changed - No action configured"
+          level: WARN
+  - platform: gpio
+    pin:
+      number: GPIO9
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: "switch_sensor_2"
+    on_state:
+      - logger.log: 
+          format: "Button / Switch Sensor 3 (internal BUTTON1) state changed - No action configured"
+          level: WARN
+
+status_led:
+  pin:
+    number: GPIO13
+    inverted: yes
+
