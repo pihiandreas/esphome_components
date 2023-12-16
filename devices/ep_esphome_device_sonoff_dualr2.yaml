@@ -22,9 +22,11 @@ switch:
   - platform: output
     name: "Switch 1"
     id: switch_1
+    output: output_1
   - platform: output
     name: "Switch 2"
     id: switch_2
+    output: output_2
 
 # https://esphome.io/devices/sonoff.html#sonoff-dual-r2-v1-4
 binary_sensor:
