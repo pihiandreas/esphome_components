@@ -88,35 +88,35 @@ text_sensor:
     scan_results:
       name: WiFi Latest Scan Results
 
-time:
-  - platform: sntp
-    timezone: "Europe/Helsinki"
-    servers:
-      - 192.168.12.9
-      #- 194.100.49.139 # time.mikes.fi / https://www.vttresearch.com/fi/palvelut/suomen-aika-ntp-palvelu#julkinen
-    on_time_sync:
-      then:
-#      - logger.log: "Synchronized system clock"
-      - logger.log: 
-          format: "Synchronized system clock"
-          level: WARN
-    on_time:
-      - seconds: /60
-        then:
-          - logger.log: 
-              format: "Time?"
-              level: WARN
-          - if:
-              condition:
-                - time.has_time:
-              then:
-                - logger.log: 
-                    format: "Time is valid."
-                    level: WARN
-              else:
-                - logger.log: 
-                    format: "Time not set."
-                    level: ERROR
+# time:
+#   - platform: sntp
+#     timezone: "Europe/Helsinki"
+#     servers:
+#       - 192.168.12.9
+#       #- 194.100.49.139 # time.mikes.fi / https://www.vttresearch.com/fi/palvelut/suomen-aika-ntp-palvelu#julkinen
+#     on_time_sync:
+#       then:
+# #      - logger.log: "Synchronized system clock"
+#       - logger.log:
+#           format: "Synchronized system clock"
+#           level: WARN
+#     on_time:
+#       - seconds: /60
+#         then:
+#           - logger.log:
+#               format: "Time?"
+#               level: WARN
+#           - if:
+#               condition:
+#                 - time.has_time:
+#               then:
+#                 - logger.log:
+#                     format: "Time is valid."
+#                     level: WARN
+#               else:
+#                 - logger.log:
+#                     format: "Time not set."
+#                     level: ERROR
 
 sensor:
   - platform: wifi_signal
