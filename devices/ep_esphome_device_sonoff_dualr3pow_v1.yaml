@@ -53,7 +53,7 @@ sensor:
       name: "Frequency"
       unit_of_measurement: Hz
       accuracy_decimals: 2
-      device_class: VOLTAGE
+      device_class: FREQUENCY
       state_class: measurement
       retain: False
     current_1:
