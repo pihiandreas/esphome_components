@@ -71,14 +71,14 @@ sensor:
       state_class: measurement
       retain: False
     active_power_1:
-      name: "Power 1"
+      name: "Active Power 1"
       unit_of_measurement: W
       accuracy_decimals: 3
       device_class: POWER
       state_class: measurement
       retain: False
     active_power_2:
-      name: "Power 2"
+      name: "Active Power 2"
       unit_of_measurement: W
       accuracy_decimals: 3
       device_class: POWER
