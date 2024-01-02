@@ -46,48 +46,64 @@ sensor:
       name: "Voltage"
       unit_of_measurement: V
       accuracy_decimals: 1
+      device_class: VOLTAGE
+      state_class: measurement
       retain: False
     frequency:
       name: "Frequency"
       unit_of_measurement: Hz
       accuracy_decimals: 2
+      device_class: VOLTAGE
+      state_class: measurement
       retain: False
     current_1:
       name: "Current 1"
       unit_of_measurement: A
       accuracy_decimals: 3
       retain: False
+      device_class: CURRENT
+      state_class: measurement
     current_2:
       name: "Current 2"
       unit_of_measurement: A
       accuracy_decimals: 3
+      device_class: CURRENT
+      state_class: measurement
       retain: False
     active_power_1:
       name: "Power 1"
       unit_of_measurement: W
       accuracy_decimals: 3
+      device_class: POWER
+      state_class: measurement
       retain: False
     active_power_2:
       name: "Power 2"
       unit_of_measurement: W
       accuracy_decimals: 3
+      device_class: POWER
+      state_class: measurement
       retain: False
     energy_1:
       name: "Energy 1"
       unit_of_measurement: kWh
       accuracy_decimals: 3
+      device_class: ENERGY
+      state_class: total_increasing
       retain: False
     energy_2:
       name: "Energy 2"
       unit_of_measurement: kWh
       accuracy_decimals: 3
+      device_class: ENERGY
+      state_class: total_increasing
       retain: False
-    energy_counter_1:
-      name: "Energy Counter 1"
-      retain: False
-    energy_counter_2:
-      name: "Energy Counter 2"
-      retain: False
+    # energy_counter_1:
+    #   name: "Energy Counter 1"
+    #   retain: False
+    # energy_counter_2:
+    #   name: "Energy Counter 2"
+    #   retain: False
 
 output:
   - platform: gpio
