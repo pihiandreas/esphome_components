@@ -109,14 +109,14 @@ sensor:
     #   retain: False
   - platform: template
     name: "Active Power Total"
+    update_interval: ${update_interval}
     unit_of_measurement: W
     accuracy_decimals: 1
     device_class: POWER
     state_class: measurement
     lambda: |-
-      return (id(active_power_1).state | float(default=0.0) + id(active_power_2).state | float(default=0.0))
+      return (id(active_power_1).state + id(active_power_2).state);
     retain: False
-
 output:
   - platform: gpio
     pin: GPIO27

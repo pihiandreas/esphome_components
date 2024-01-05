@@ -107,6 +107,7 @@ sensor:
     #   retain: False
   - platform: template
     name: "Active Power Total"
+    update_interval: ${update_interval}
     unit_of_measurement: W
     accuracy_decimals: 1
     device_class: POWER
