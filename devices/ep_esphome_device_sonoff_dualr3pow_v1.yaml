@@ -41,6 +41,7 @@ uart:
 
 sensor:
   - platform: ep_em_cse7761
+    id: energymeter_1
     update_interval: ${update_interval}
     voltage:
       name: "Voltage"
@@ -59,28 +60,30 @@ sensor:
     current_1:
       name: "Current 1"
       unit_of_measurement: A
-      accuracy_decimals: 3
+      accuracy_decimals: 2
       retain: False
       device_class: CURRENT
       state_class: measurement
     current_2:
       name: "Current 2"
       unit_of_measurement: A
-      accuracy_decimals: 3
+      accuracy_decimals: 2
       device_class: CURRENT
       state_class: measurement
       retain: False
     active_power_1:
       name: "Active Power 1"
+      id: active_power_1
       unit_of_measurement: W
-      accuracy_decimals: 3
+      accuracy_decimals: 1
       device_class: POWER
       state_class: measurement
       retain: False
     active_power_2:
       name: "Active Power 2"
+      id: active_power_2
       unit_of_measurement: W
-      accuracy_decimals: 3
+      accuracy_decimals: 1
       device_class: POWER
       state_class: measurement
       retain: False
@@ -104,6 +107,15 @@ sensor:
     # energy_counter_2:
     #   name: "Energy Counter 2"
     #   retain: False
+  - platform: template
+    name: "Active Power Total"
+    unit_of_measurement: W
+    accuracy_decimals: 1
+    device_class: POWER
+    state_class: measurement
+    lambda: |-
+      return (id(active_power_1).state | float(default=0.0) + id(active_power_2).state | float(default=0.0))
+    retain: False
 
 output:
   - platform: gpio

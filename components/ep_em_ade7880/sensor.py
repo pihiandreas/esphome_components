@@ -177,7 +177,7 @@ async def neutral_channel(config):
     current = config[CONF_CURRENT]
     sensor_name = current.get(CONF_NAME)
     if sensor_name and channel_name and not sensor_name.startswith(channel_name):
-        current[CONF_NAME] = f"{channel_name} {sensor_name}"
+        current[CONF_NAME] = f"{sensor_name} {channel_name}"
     sens = await sensor.new_sensor(current)
     cg.add(var.set_current(sens))
 
@@ -207,7 +207,7 @@ async def power_channel(config):
                 and channel_name
                 and not sensor_name.startswith(channel_name)
             ):
-                conf[CONF_NAME] = f"{channel_name} {sensor_name}"
+                conf[CONF_NAME] = f"{sensor_name} {channel_name}"
             sens = await sensor.new_sensor(conf)
             cg.add(getattr(var, f"set_{sensor_type}")(sens))
 
