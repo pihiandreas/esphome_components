@@ -93,7 +93,7 @@ sensor:
         power: -1345638
         phase_angle: 188
     phase_c:
-      name: L1
+      name: L3
       voltage: Voltage
       current: Current
       active_power: Active Power
@@ -106,7 +106,7 @@ sensor:
         power: -1351437
         phase_angle: 180
     neutral:
-      name: Neutral
+      name: N
       current: Current
       calibration:
         current: 311123
