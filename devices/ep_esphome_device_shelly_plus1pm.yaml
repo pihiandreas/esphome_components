@@ -49,40 +49,45 @@ sensor:
     cf1_pin: GPIO18
     current_resistor: ${current_res}
     voltage_divider: ${voltage_div}
-    current:
-      name: "Current"
-      unit_of_measurement: A
-      accuracy_decimals: 3
-      icon: mdi:flash-outline
-      retain: False
+#    change_mode_every: 2
+    change_mode_every: 0
+    update_interval: ${update_interval}
     voltage:
       name: "Voltage"
       unit_of_measurement: V
       accuracy_decimals: 1
-      icon: mdi:flash-outline
+      device_class: VOLTAGE
+      state_class: measurement
+      retain: False
+    current:
+      name: "Current 1"
+      unit_of_measurement: A
+      accuracy_decimals: 3
+      device_class: CURRENT
+      state_class: measurement
       retain: False
     power:
-      name: "Power"
+      name: "Active Power 1"
       unit_of_measurement: W
       id: power
-      icon: mdi:flash-outline
+      accuracy_decimals: 1
+      device_class: POWER
+      state_class: measurement
       retain: False
       on_value_range:
         - above: "3600"
           then:
             - switch.turn_off: "switch_1"
     energy:
-      name: "Energy"
+      name: "Energy 1"
       unit_of_measurement: kWh
       id: energy
-      icon: mdi:flash-outline
+      accuracy_decimals: 3
+      device_class: ENERGY
+      state_class: total_increasing
       retain: False
-      accuracy_decimals: 4
       filters:
         - multiply: 0.001
-#    change_mode_every: 2
-    change_mode_every: 0
-    update_interval: ${update_interval}
 
   - platform: ntc
     sensor: temp_resistance_reading
