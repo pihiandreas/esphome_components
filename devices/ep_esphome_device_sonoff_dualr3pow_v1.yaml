@@ -117,6 +117,7 @@ sensor:
     lambda: |-
       return (id(active_power_1).state + id(active_power_2).state);
     retain: False
+
 output:
   - platform: gpio
     pin: GPIO27

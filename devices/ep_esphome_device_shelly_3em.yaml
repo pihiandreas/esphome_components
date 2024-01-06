@@ -67,39 +67,39 @@ sensor:
     frequency: 50Hz
     update_interval: ${em_update_interval}
     phase_a:
-      name: Phase A
+      name: L1
       voltage: Voltage
       current: Current
       active_power: Active Power
       power_factor: Power Factor
-      forward_active_energy: Forward Active Energy
-      reverse_active_energy: Reverse Active Energy
+      forward_active_energy: Energy
+      reverse_active_energy: Reverse Energy
       calibration:
         current: 3116628
         voltage: -757178
         power: -1344457
         phase_angle: 188
     phase_b:
-      name: Phase B
+      name: L2
       voltage: Voltage
       current: Current
       active_power: Active Power
       power_factor: Power Factor
-      forward_active_energy: Forward Active Energy
-      reverse_active_energy: Reverse Active Energy
+      forward_active_energy: Energy
+      reverse_active_energy: Reverse Energy
       calibration:
         current: 3133655
         voltage: -755235
         power: -1345638
         phase_angle: 188
     phase_c:
-      name: Phase C
+      name: L1
       voltage: Voltage
       current: Current
       active_power: Active Power
       power_factor: Power Factor
-      forward_active_energy: Forward Active Energy
-      reverse_active_energy: Reverse Active Energy
+      forward_active_energy: Energy
+      reverse_active_energy: Reverse Energy
       calibration:
         current: 3111158
         voltage: -743813
